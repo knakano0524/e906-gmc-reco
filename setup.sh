@@ -1,10 +1,6 @@
 source /exp/seaquest/app/software/osg/software/AL9/setup.sh
-#source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker/setup.sh
-#source /exp/seaquest/app/software/osg/software/AL9/GMC-20260209/setup.sh
-#source /exp/seaquest/app/software/osg/software/AL9/seaquest/NEW/ktracker/setup.sh
-#source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0609/setup.sh
-#source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0622i/setup.sh
-source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0705d/setup.sh
+source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker/setup.sh
+#source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0705d/setup.sh
 
 export GEN_MODE=dy
 export RUN_MODE=run2  # run2 run3 run5

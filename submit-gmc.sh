@@ -29,13 +29,13 @@ case $ACC_MODE in
 esac
 echo "ACC = $ACC"
 
-N_EVT=100000
-N_RUN=100
-echo "N_EVT = $N_EVT"
-echo "N_RUN = $N_RUN"
+N_EVT_GEN=100000
+N_RUN_GEN=100
+echo "N_EVT_GEN = $N_EVT_GEN"
+echo "N_RUN_GEN = $N_RUN_GEN"
 
 runGMC.py --grid --preset=$PRESET --Record=ROOT --server=e906-db1.fnal.gov \
 	  --raw-name=$RAW_NAME \
-	  --n-events=$N_EVT --n-subruns=$N_RUN --first-subrun=1 \
+	  --n-events=$N_EVT_GEN --n-subruns=$N_RUN_GEN --first-subrun=1 \
 	  --Target=$TARGET --EventPosition=Target --Generator=DY --Acceptance=$ACC \
 	  --gmc-devel
