@@ -73,3 +73,9 @@ root -b ana_both.cc
 ```
 
 `ana_both.cc` is a macro to parse the event and vertex files together.
+
+
+## To-Do List
+
+* Rewrite `setup.sh` etc. so that multiple settings can be generated+reconstructed in parallel.
+* Include generating and reconstructing messy MC.
