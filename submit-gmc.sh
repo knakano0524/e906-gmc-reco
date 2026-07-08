@@ -24,7 +24,7 @@ echo "TARGET = $TARGET"
 ACC=
 case $ACC_MODE in
     acc ) ACC=Acc ;;
-    4pi ) ACC=4pi ;;
+    4pi ) ACC=DimuonOnly ;;
     * ) echo "ERROR: Unknown ACC_MODE ($ACC_MODE)." ; exit 0 ;;
 esac
 echo "ACC = $ACC"
