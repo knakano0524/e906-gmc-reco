@@ -13,6 +13,8 @@ You might source it at any time, to use `root` etc. interactively.
 All output files are placed under `/pnfs/e906/scratch/users/$USER/data_production/GMC`.
 `setup.sh` creates a symbolic link, `GMC`, pointing to the output directory for your convenience.
 The following sub-directories are used by default:
+    | Sub-Directory               | Stored Files                   |
+    | --------------------------- | ------------------------------ |
     | GMC/data/                   | Raw (GMC-produced) event files |
     | GMC/clean/		  | Clean-event files              |
     | GMC/messy/		  | Messy-event files	           |
