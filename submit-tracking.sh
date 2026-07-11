@@ -5,11 +5,11 @@ source $DIR_TOP/setup.sh
 echo "RAW_NAME = $RAW_NAME"
 echo "BG_MODE  = $BG_MODE"
 
-DIR_IN=$DIR_DATA_BASE/data/$RAW_NAME
-DIR_AUTO=auto_file
+DIR_IN=$DIR_DATA_BASE/$BG_MODE/$RAW_NAME
+DIR_OUT=$DIR_DATA_BASE/track/$RAW_NAME/$BG_MODE
 FN_LIST=list_for_tracking.txt
 echo "DIR_IN   = $DIR_IN"
-echo "DIR_AUTO = $DIR_AUTO"
+echo "DIR_OUT  = $DIR_OUT"
 echo "FN_LIST  = $FN_LIST"
 
 mkdir -p $DIR_AUTO
@@ -29,12 +29,14 @@ fi
 FN_CONF=tracking_${RAW_NAME}_${BG_MODE}.conf
 echo -n "Making $DIR_AUTO/$FN_CONF... "
 {
+    JOB_LIFE=short
+    test $BG_MODE = messy && JOB_LIFE=long
     echo "indir = /"
-    echo "outdir = $DIR_DATA_BASE/track/$RAW_NAME/$BG_MODE"
+    echo "outdir = $DIR_OUT"
     echo "opts = \$KTRACKER_ROOT/opts/mc_$OPT_NAME.opts"
     echo "osg"
     echo "localmap"
-    echo "grid-args = '--expected-lifetime-eq-'short''"
+    echo "grid-args = '--expected-lifetime-eq-'$JOB_LIFE''"
 } >$DIR_AUTO/$FN_CONF
 echo " ...done."
 

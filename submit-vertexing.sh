@@ -7,11 +7,9 @@ echo "BG_MODE  = $BG_MODE"
 
 DIR_IN=$DIR_DATA_BASE/track/$RAW_NAME/$BG_MODE
 DIR_OUT=$DIR_DATA_BASE/vertex/$RAW_NAME/$BG_MODE
-DIR_AUTO=auto_file
 FN_LIST=list_for_vertexing.txt
 echo "DIR_IN   = $DIR_IN"
 echo "DIR_OUT  = $DIR_OUT"
-echo "DIR_AUTO = $DIR_AUTO"
 echo "FN_LIST  = $FN_LIST"
 
 mkdir -p $DIR_AUTO
@@ -32,7 +30,7 @@ FN_CONF=vertexing_${RAW_NAME}_${BG_MODE}.conf
 echo -n "Making $DIR_AUTO/$FN_CONF... "
 {
     echo "indir = "
-    echo "outdir = $DIR_DATA_BASE/vertex/$RAW_NAME/$BG_MODE"
+    echo "outdir = $DIR_OUT"
     echo "opts = \$KTRACKER_ROOT/opts/mc_$OPT_NAME.opts"
     echo "osg"
     echo "localmap"

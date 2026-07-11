@@ -5,12 +5,11 @@ source $DIR_TOP/setup.sh
 echo "RAW_NAME = $RAW_NAME"
 echo "BG_MODE  = $BG_MODE"
 
-DIR_AUTO=auto_file
-echo "DIR_AUTO = $DIR_AUTO"
-
 mkdir -p $DIR_AUTO
 
-DIR=$DIR_DATA_BASE/data/$RAW_NAME
+#DIR=$DIR_DATA_BASE/data/$RAW_NAME
+#DIR=$DIR_DATA_BASE/clean/$RAW_NAME
+DIR=$DIR_DATA_BASE/$BG_MODE/$RAW_NAME
 if [ -e $DIR ] ; then
     find $DIR -name "user_*.root" | sort >$DIR_AUTO/list_ana_event.txt
 fi

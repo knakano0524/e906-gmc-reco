@@ -76,22 +76,34 @@ void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char
   SRecEvent  * rec = 0;
   tree_evt->SetBranchAddress("rawEvent", &raw);
   tree_vtx->SetBranchAddress("recEvent", &rec);
-  unsigned int i_ent_vtx = -1;
+  unsigned int n_evt_missed = 0;
+  unsigned int i_ent_vtx = 0;
   for (unsigned int i_ent_evt = 0; i_ent_evt < n_ent_evt; i_ent_evt++) {
     if      ( (i_ent_evt+1) % (n_ent_evt/ 10) == 0) cout << "o" << flush;
     else if ( (i_ent_evt+1) % (n_ent_evt/100) == 0) cout << "." << flush;
     tree_evt->GetEntry(i_ent_evt);
     int   run_id = raw->getRunID();
     int event_id = raw->getEventID();
+    bool found = false;
     while (true) {
       tree_vtx->GetEntry(i_ent_vtx);
-      if (rec->getRunID() == run_id && rec->getEventID() == event_id) break;
-      i_ent_vtx++;
-      if (i_ent_vtx == n_ent_vtx) {
-        cout << "!!ERROR!!  Cannot find a matched vertexed event: "
-             << run_id << " " << event_id << ".  Abort." << endl;
-        exit(1);
+      int rr = rec->getRunID();
+      int ee = rec->getEventID();
+      if (rr == run_id && ee == event_id) {
+        found = true;
+        break;
+      } else if (rr > run_id || (rr == run_id && ee > event_id)) {
+        n_evt_missed++;
+        break;
+      } else if (i_ent_vtx == n_ent_vtx - 1) {
+        n_evt_missed++;
+        break;
       }
+      i_ent_vtx++;
+    }
+    if (! found) {
+      if (i_ent_vtx == n_ent_vtx - 1) break; // No more candidates in tree_vtx.
+      continue;
     }
     h1_cnt->Fill(1);
 
@@ -222,36 +234,36 @@ void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char
       //h3_nhit_cham->Fill(n_d2, 2, 2, weight);
       //h3_nhit_cham->Fill(n_d3, 3, 2, weight);
       //h3_nhit_cham->Fill(n_p4, 4, 2, weight);
-      if (rec->getNDimuons() == 0) {
-        cout << "XX " << i_ent_evt << " " << run_id << " " << event_id << " : "
-             << v_st1_pos->X() << " " << v_st1_pos->Y() << " : "
-             << v_st3_pos->X() << " " << v_st3_pos->Y() << " :: "
-             << v_st1_neg->X() << " " << v_st1_neg->Y() << " : "
-             << v_st3_neg->X() << " " << v_st3_neg->Y()
-             << endl;
-        double dxdz3 = p_st3_pos->X() / p_st3_pos->Z();
-        double x03   = v_st3_pos->X() - dxdz3 * v_st3_pos->Z();
-        double dydz3 = p_st3_pos->Y() / p_st3_pos->Z();
-        double y03   = v_st3_pos->Y() - dydz3 * v_st3_pos->Z();
-        cout << " XX pos X-Z: " << dxdz3 << " * z + " << x03 << endl
-             << " XX pos Y-Z: " << dydz3 << " * z + " << y03 << endl;
-        dxdz3 = p_st3_neg->X() / p_st3_neg->Z();
-        x03   = v_st3_neg->X() - dxdz3 * v_st3_neg->Z();
-        dydz3 = p_st3_neg->Y() / p_st3_neg->Z();
-        y03   = v_st3_neg->Y() - dydz3 * v_st3_neg->Z();
-        cout << " XX neg X-Z: " << dxdz3 << " * z + " << x03 << endl
-             << " XX neg Y-Z: " << dydz3 << " * z + " << y03 << endl;
-        for (int ii = 0; ii < rec->getNTracks(); ii++) {
-          SRecTrack trk = rec->getTrack(ii);
-          TVector3 v1 = trk.getPositionVecSt1();
-          //TVector3 p1 = trk.getMomentumVecSt1();
-          TVector3 v3 = trk.getPositionVecSt3();
-          //TVector3 p3 = trk.getMomentumVecSt3();
-          cout << " XX " << trk.getCharge() << " " << v1.X() << " " << v1.Y() << " : " << v3.X() << " " << v3.Y() << endl;
-        }
-      }
+      //if (rec->getNDimuons() == 0) {
+      //  cout << "XX " << i_ent_evt << " " << run_id << " " << event_id << " : "
+      //       << v_st1_pos->X() << " " << v_st1_pos->Y() << " : "
+      //       << v_st3_pos->X() << " " << v_st3_pos->Y() << " :: "
+      //       << v_st1_neg->X() << " " << v_st1_neg->Y() << " : "
+      //       << v_st3_neg->X() << " " << v_st3_neg->Y()
+      //       << endl;
+      //  double dxdz3 = p_st3_pos->X() / p_st3_pos->Z();
+      //  double x03   = v_st3_pos->X() - dxdz3 * v_st3_pos->Z();
+      //  double dydz3 = p_st3_pos->Y() / p_st3_pos->Z();
+      //  double y03   = v_st3_pos->Y() - dydz3 * v_st3_pos->Z();
+      //  cout << "  pos X-Z: " << dxdz3 << " * z + " << x03 << endl
+      //       << "  pos Y-Z: " << dydz3 << " * z + " << y03 << endl;
+      //  dxdz3 = p_st3_neg->X() / p_st3_neg->Z();
+      //  x03   = v_st3_neg->X() - dxdz3 * v_st3_neg->Z();
+      //  dydz3 = p_st3_neg->Y() / p_st3_neg->Z();
+      //  y03   = v_st3_neg->Y() - dydz3 * v_st3_neg->Z();
+      //  cout << "  neg X-Z: " << dxdz3 << " * z + " << x03 << endl
+      //       << "  neg Y-Z: " << dydz3 << " * z + " << y03 << endl;
+      //  for (int ii = 0; ii < rec->getNTracks(); ii++) {
+      //    SRecTrack trk = rec->getTrack(ii);
+      //    TVector3 v1 = trk.getPositionVecSt1();
+      //    //TVector3 p1 = trk.getMomentumVecSt1();
+      //    TVector3 v3 = trk.getPositionVecSt3();
+      //    //TVector3 p3 = trk.getMomentumVecSt3();
+      //    cout << "  " << trk.getCharge() << " " << v1.X() << " " << v1.Y() << " : " << v3.X() << " " << v3.Y() << endl;
+      //  }
+      //}
     }
-
+    
     ///
     /// Check FPGA1 trigger condition using hodoscope hits.
     ///
@@ -369,16 +381,22 @@ void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char
     i_ent_vtx++;
   }
   cout << endl;
-    
+  if (n_evt_missed > 0) {
+    cout << "!!WARNING!!  n_evt_missed = " << n_evt_missed << endl;
+  }
+  
   ofstream ofs("result/both/result.txt");
   ofs << "N of trees   = " << n_tree_evt << "\n"
-      << "N of all events            = " << h1_cnt->GetBinContent(1) << "\n"
+      << "N of all events            = " << n_ent_evt << "\n"
+      << "N of matched events        = " << h1_cnt->GetBinContent(1) << "\n"
       << "N of T+B/B+T events        = " << h1_cnt->GetBinContent(2) << "\n"
       << "N of FPGA1 events          = " << h1_cnt->GetBinContent(3) << "\n"
       << "N of reco. events          = " << h1_cnt->GetBinContent(4) << "\n"
-      << "N of reco. matched events  = " << h1_cnt->GetBinContent(5) << "\n";
+      << "N of reco. matched events  = " << h1_cnt->GetBinContent(5) << "\n"
+      << "N of missed events         = " << n_evt_missed << "\n";
   ofs.close();
 
+  gErrorIgnoreLevel = 1111;
   TCanvas* c1 = new TCanvas("c1", "");
   c1->SetGrid();
 
