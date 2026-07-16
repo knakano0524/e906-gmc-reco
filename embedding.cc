@@ -9,6 +9,7 @@ const string dir_nim3_data = "/pnfs/e906/persistent/users/kenichi/NIM3_data";
  */
 void embedding(const string ds, const int tgt, const string raw_name, const string dir_gmc_base)
 {
+  time_t time0 = time(0);
   ostringstream oss;
   oss << dir_nim3_data << "/NIM3_ds" << ds << "_tgt" << tgt << ".root";
   string fn_nim3 = oss.str();
@@ -82,17 +83,24 @@ void embedding(const string ds, const int tgt, const string raw_name, const stri
     file_out->Close();
     n_evt_mc_tot += n_evt_mc;
   }
+  time_t time1 = time(0);
   
   ///
   /// End
   ///
+  /// Output files (on pnfs) become unreadable if not deleted in advance.
+  gSystem->Unlink((dir_out + "/stat.txt").c_str());
+  gSystem->Unlink((dir_out + "/h1_inte_all.pdf").c_str());
+  gSystem->Unlink((dir_out + "/h1_inte_emb.pdf").c_str());
+  
   ofstream ofs( (dir_out + "/stat.txt").c_str() );
   ofs << "n_file_mc    = " << n_file_mc << "\n"
       << "n_evt_mc_tot = " << n_evt_mc_tot << "\n"
       << "fn_nim3      = " << fn_nim3 << "\n"
       << "n_evt_nim3   = " << n_evt_nim3 << "\n"
       << "n_loop_nim3  = " << n_loop_nim3 << "\n"
-      << "i_evt_nim3   = " << i_evt_nim3 << "\n";
+      << "i_evt_nim3   = " << i_evt_nim3 << "\n"
+      << "time         = " << (time1-time0)/60.0 << " min\n";
   ofs.close();
 
   TCanvas* c1 = new TCanvas("c1", "");

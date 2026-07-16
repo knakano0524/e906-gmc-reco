@@ -1,9 +1,9 @@
 source /exp/seaquest/app/software/osg/software/AL9/setup.sh
-source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0710/setup.sh
+source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0715/setup.sh
 #source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0705d/setup.sh
 
 export GEN_MODE=dy
-export RUN_MODE=run2  # run2 run3 run5
+export RUN_MODE=run3  # run2 run3 run5
 export TGT_MODE=lh2
 export ACC_MODE=acc
 export RAW_NAME=gmc_${GEN_MODE}_${TGT_MODE}_${RUN_MODE}_${ACC_MODE}
