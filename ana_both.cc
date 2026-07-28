@@ -79,8 +79,8 @@ void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char
   unsigned int n_evt_missed = 0;
   unsigned int i_ent_vtx = 0;
   for (unsigned int i_ent_evt = 0; i_ent_evt < n_ent_evt; i_ent_evt++) {
-    if      ( (i_ent_evt+1) % (n_ent_evt/ 10) == 0) cout << "o" << flush;
-    else if ( (i_ent_evt+1) % (n_ent_evt/100) == 0) cout << "." << flush;
+    if      ( (i_ent_evt+1) % (n_ent_evt/100*10) == 0) cout << "o" << flush;
+    else if ( (i_ent_evt+1) % (n_ent_evt/100   ) == 0) cout << "." << flush;
     tree_evt->GetEntry(i_ent_evt);
     int   run_id = raw->getRunID();
     int event_id = raw->getEventID();

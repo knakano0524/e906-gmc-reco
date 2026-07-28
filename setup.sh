@@ -1,5 +1,5 @@
 source /exp/seaquest/app/software/osg/software/AL9/setup.sh
-source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0715/setup.sh
+source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0728/setup.sh
 #source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0705d/setup.sh
 
 export GEN_MODE=dy

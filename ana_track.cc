@@ -69,8 +69,8 @@ void ana_track(const char* fn_list="auto_file/list_ana_track.txt")
   tree->SetBranchAddress("rawEvent", &raw);
   tree->SetBranchAddress("recEvent", &rec);
   for (unsigned int i_ent = 0; i_ent < n_ent; i_ent++) {
-    if      ( (i_ent+1) % (n_ent/ 10) == 0) cout << "o" << flush;
-    else if ( (i_ent+1) % (n_ent/100) == 0) cout << "." << flush;
+    if      ( (i_ent+1) % (n_ent/100*10) == 0) cout << "o" << flush;
+    else if ( (i_ent+1) % (n_ent/100   ) == 0) cout << "." << flush;
     tree->GetEntry(i_ent);
     h1_cnt->Fill(1);
     

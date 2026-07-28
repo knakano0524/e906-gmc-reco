@@ -25,8 +25,8 @@ void embedding(const string ds, const int tgt, const string raw_name, const stri
   SRawEvent* raw_nim3 = 0;
   float     intensity = 0;
 
-  TH1* h1_inte_all = new TH1D("h1_inte_all", "", 100, 0, 100e3);
-  TH1* h1_inte_emb = new TH1D("h1_inte_emb", "", 100, 0, 100e3);
+  TH1* h1_inte_all = new TH1D("h1_inte_all", ";Intensity (protons);", 100, 0, 100e3);
+  TH1* h1_inte_emb = new TH1D("h1_inte_emb", ";Intensity (protons);", 100, 0, 100e3);
   tree_nim3->SetBranchAddress("intensity", &intensity);
   for (unsigned int i_evt = 0; i_evt < n_evt_nim3; i_evt++) {
     tree_nim3->GetEntry(i_evt);
