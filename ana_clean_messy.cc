@@ -1,6 +1,6 @@
 #include <JobOptsSvc.h>
 #include <GeomSvc.h>
-//#include "inc/UtilTrigger.h"
+#include "inc/Common.h"
 #include "inc/UtilCut.h"
 R__LOAD_LIBRARY(kTracker)
 using namespace std;
@@ -8,6 +8,7 @@ void CalcAndDrawEff(TH2* h2, const string label);
 
 void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
 {
+  const int tgt = 1; // LH2
   int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
   cout << "Roadset " << rs_id << endl;
   //auto list_road_pos_top = UtilTrigger::ReadRoadList(rs_id, +1, +1);
@@ -89,10 +90,14 @@ void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
     }
     h1_cnt->Fill(2);
 
+    double mass_t = raw_me->mass;
+    double xF_t   = raw_me->xF;
+    double pT_t   = raw_me->pT;
     double weight = raw_me->weight;
+    //double weight = raw_me->weight * GetPtReWeight(tgt, pT_t, xF_t, mass_t);
     int n_d1 = raw_me->getNHitsInD1();
     int n_d2 = raw_me->getNHitsInD2();
-    
+
     ///
     /// Find reco. dimuons in Clean and Measy.
     ///

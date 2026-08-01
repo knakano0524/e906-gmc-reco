@@ -28,4 +28,27 @@ std::vector<int> MakeRoadList(
   return list_road;
 }
 
+/// cf. https://seaquest-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=9397
+/// DY only
+double GetPtReWeight(const int tgt, const double pT, const double xF, const double mass)
+{
+  const double P = 120.0;
+  const double M = 0.938;
+  const double S = 2*M*M + 2*M*sqrt(P*P+M*M);
+  const double p1_old = 2.8; //DY
+  //Double_t p1_old = 3.0;//jpsi & psip
+	
+  double tau = mass*mass/S;
+  double pTsqMax = S/4 * (1-tau)*(1-tau)*(1-xF*xF);
+  if (pTsqMax < 0.09) return 1.0;
+
+  const double P10[8] = { 0,  2.411 , 0,  2.394 , 0,  2.518 ,  2.434 ,  2.403  }; // DY
+  const double P11[8] = { 0, -0.7658, 0, -0.7576, 0, -0.9891, -0.5689, -0.5147 }; // DY
+  Double_t p1_new = P10[tgt] + P11[tgt] * fabs(xF);
+
+  double f_old = pow(1+pT*pT/p1_old/p1_old, 6) * p1_old*p1_old * (1 - pow(1 + pTsqMax/p1_old/p1_old, -5));
+  double f_new = pow(1+pT*pT/p1_new/p1_new, 6) * p1_new*p1_new * (1 - pow(1 + pTsqMax/p1_new/p1_new, -5));
+  return f_old / f_new;
+}
+
 #endif // _COMMON__H_
