@@ -64,7 +64,7 @@ bool Doc2111v42Dimuon(const int rs_id, SRecDimuon* dim, SRecTrack* trk1, SRecTra
     && fabs(trk_sep) < 270
     && dim->chisq_kf < 18
     && fabs( trk1->getChisqTarget() + trk2->getChisqTarget() - dim->chisq_kf) < 2
-    && trk1->getMomentumVecSt3().Y() * trk2->getMomentumVecSt3().Y() < 0
+    && trk1->getPositionVecSt3().Y() * trk2->getPositionVecSt3().Y() < 0
     && trk1->getNHits() + trk2->getNHits() > 29
     && trk1->getNHitsInStation(1) + trk2->getNHitsInStation(1) > 8
     && fabs( trk1->getPositionVecSt1().X() + trk2->getPositionVecSt1().X() ) < 42
