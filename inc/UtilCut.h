@@ -3,6 +3,22 @@
 #include <SRecEvent.h>
 
 namespace UtilCut {
+
+bool Doc2111v42TrueDimuon(SRawMCEvent* raw)
+{
+  double mass   = raw->mass;
+  double x1     = raw->x1;
+  double x2     = raw->x2;
+  double pT     = raw->pT;
+  double xF     = raw->xF;
+  double costh  = raw->costh;
+  double weight = raw->weight;
+  return pT*pT < 5 &&
+    4.2 < mass && mass < 8.8 &&
+    -0.1 < xF && xF < 0.95 &&
+    0.05 < x2 && x2 < 0.55 &&
+    fabs(costh) < 0.5        ;
+}
   
 bool Doc2111v42Track(const int rs_id, SRecTrack* trk)
 {
