@@ -30,36 +30,51 @@ void ana_acc(const char* fn_list_4pi="auto_file/list_ana_4pi.txt", const char* f
   Ana4pi(fn_list_4pi);
   AnaAcc(fn_list_acc, rs_id);
 
+  /// Read the 4pi and acc outputs to compute the acceptance.
   const double n_evt_gen = 10e6;
   
   TFile* f_4pi = new TFile("result/acc/4pi.root");
-  TH1* h1_x1_4pi  = (TH1*)f_4pi->Get("h1_x1_4pi");
-  TH1* h1_x2_4pi  = (TH1*)f_4pi->Get("h1_x2_4pi");
-  TH1* h1_pT_4pi  = (TH1*)f_4pi->Get("h1_pT_4pi");
-  h1_x1_4pi ->Scale(1/n_evt_gen);
-  h1_x2_4pi ->Scale(1/n_evt_gen);
-  h1_pT_4pi ->Scale(1/n_evt_gen);
+  TH1* h1_mass_4pi = (TH1*)f_4pi->Get("h1_mass_4pi");
+  TH1* h1_xF_4pi   = (TH1*)f_4pi->Get("h1_xF_4pi");
+  TH1* h1_x1_4pi   = (TH1*)f_4pi->Get("h1_x1_4pi");
+  TH1* h1_x2_4pi   = (TH1*)f_4pi->Get("h1_x2_4pi");
+  TH1* h1_pT_4pi   = (TH1*)f_4pi->Get("h1_pT_4pi");
+  h1_mass_4pi->Scale(1/n_evt_gen);
+  h1_xF_4pi  ->Scale(1/n_evt_gen);
+  h1_x1_4pi  ->Scale(1/n_evt_gen);
+  h1_x2_4pi  ->Scale(1/n_evt_gen);
+  h1_pT_4pi  ->Scale(1/n_evt_gen);
   
   TFile* f_acc = new TFile("result/acc/acc.root");
-  TH1* h1_x1_acc  = (TH1*)f_acc->Get("h1_x1_acc");
-  TH1* h1_x2_acc  = (TH1*)f_acc->Get("h1_x2_acc");
-  TH1* h1_pT_acc  = (TH1*)f_acc->Get("h1_pT_acc");
-  TH1* h1_x1_acc2 = (TH1*)f_acc->Get("h1_x1_acc2");
-  TH1* h1_x2_acc2 = (TH1*)f_acc->Get("h1_x2_acc2");
-  TH1* h1_pT_acc2 = (TH1*)f_acc->Get("h1_pT_acc2");
-  h1_x1_acc ->Scale(1/n_evt_gen);
-  h1_x2_acc ->Scale(1/n_evt_gen);
-  h1_pT_acc ->Scale(1/n_evt_gen);
-  h1_x1_acc2->Scale(1/n_evt_gen);
-  h1_x2_acc2->Scale(1/n_evt_gen);
-  h1_pT_acc2->Scale(1/n_evt_gen);
+  TH1* h1_mass_acc  = (TH1*)f_acc->Get("h1_mass_acc");
+  TH1* h1_xF_acc    = (TH1*)f_acc->Get("h1_xF_acc");
+  TH1* h1_x1_acc    = (TH1*)f_acc->Get("h1_x1_acc");
+  TH1* h1_x2_acc    = (TH1*)f_acc->Get("h1_x2_acc");
+  TH1* h1_pT_acc    = (TH1*)f_acc->Get("h1_pT_acc");
+  TH1* h1_mass_acc2 = (TH1*)f_acc->Get("h1_mass_acc2");
+  TH1* h1_xF_acc2   = (TH1*)f_acc->Get("h1_xF_acc2");
+  TH1* h1_x1_acc2   = (TH1*)f_acc->Get("h1_x1_acc2");
+  TH1* h1_x2_acc2   = (TH1*)f_acc->Get("h1_x2_acc2");
+  TH1* h1_pT_acc2   = (TH1*)f_acc->Get("h1_pT_acc2");
+  h1_mass_acc ->Scale(1/n_evt_gen);
+  h1_xF_acc   ->Scale(1/n_evt_gen);
+  h1_x1_acc   ->Scale(1/n_evt_gen);
+  h1_x2_acc   ->Scale(1/n_evt_gen);
+  h1_pT_acc   ->Scale(1/n_evt_gen);
+  h1_mass_acc2->Scale(1/n_evt_gen);
+  h1_xF_acc2  ->Scale(1/n_evt_gen);
+  h1_x1_acc2  ->Scale(1/n_evt_gen);
+  h1_x2_acc2  ->Scale(1/n_evt_gen);
+  h1_pT_acc2  ->Scale(1/n_evt_gen);
 
   TFile* f_out = new TFile("result/acc/result.root", "RECREATE");
   gErrorIgnoreLevel = 1111;
   gStyle->SetOptStat(0);
-  DrawOneKin(h1_x1_4pi, h1_x1_acc, h1_x1_acc2, "x1");
-  DrawOneKin(h1_x2_4pi, h1_x2_acc, h1_x2_acc2, "x2");
-  DrawOneKin(h1_pT_4pi, h1_pT_acc, h1_pT_acc2, "pT");
+  DrawOneKin(h1_mass_4pi, h1_mass_acc, h1_mass_acc2, "mass");
+  DrawOneKin(h1_xF_4pi  , h1_xF_acc  , h1_xF_acc2  , "xF");
+  DrawOneKin(h1_x1_4pi  , h1_x1_acc  , h1_x1_acc2  , "x1");
+  DrawOneKin(h1_x2_4pi  , h1_x2_acc  , h1_x2_acc2  , "x2");
+  DrawOneKin(h1_pT_4pi  , h1_pT_acc  , h1_pT_acc2  , "pT");
   f_out->Close();
   
   exit(0);
@@ -81,9 +96,11 @@ void Ana4pi(const char* fn_list)
   cout << "  " << n_tree << " trees, " << n_ent << " entries" << endl;
 
   TFile* f_out = new TFile("result/acc/4pi.root", "RECREATE");
-  TH1* h1_x1_4pi  = new TH1D("h1_x1_4pi" , "", 40, 0.0, 1.0);
-  TH1* h1_x2_4pi  = new TH1D("h1_x2_4pi" , "", 20, 0.0, 0.5);
-  TH1* h1_pT_4pi  = new TH1D("h1_pT_4pi" , "", 20, 0.0, 2.0);
+  TH1* h1_mass_4pi = new TH1D("h1_mass_4pi", "", 50,    0, 10);
+  TH1* h1_xF_4pi   = new TH1D("h1_xF_4pi"  , "", 30, -0.2, 1.0);
+  TH1* h1_x1_4pi   = new TH1D("h1_x1_4pi"  , "", 40,  0.0, 1.0);
+  TH1* h1_x2_4pi   = new TH1D("h1_x2_4pi"  , "", 20,  0.0, 0.5);
+  TH1* h1_pT_4pi   = new TH1D("h1_pT_4pi"  , "", 20,  0.0, 2.0);
 
   SRawMCEvent* raw = 0;
   tree->SetBranchAddress("rawEvent", &raw);
@@ -93,9 +110,11 @@ void Ana4pi(const char* fn_list)
     tree->GetEntry(i_ent);
     if (UtilCut::Doc2111v42TrueDimuon(raw)) {
       double weight = raw->weight;
-      h1_x1_4pi->Fill(raw->x1, weight);
-      h1_x2_4pi->Fill(raw->x2, weight);
-      h1_pT_4pi->Fill(raw->pT, weight);
+      h1_mass_4pi->Fill(raw->mass, weight);
+      h1_xF_4pi  ->Fill(raw->xF  , weight);
+      h1_x1_4pi  ->Fill(raw->x1  , weight);
+      h1_x2_4pi  ->Fill(raw->x2  , weight);
+      h1_pT_4pi  ->Fill(raw->pT  , weight);
     }
   }
   cout << endl;
@@ -122,12 +141,16 @@ void AnaAcc(const char* fn_list, const int rs_id)
   cout << "  " << n_tree << " trees, " << n_ent << " entries" << endl;
   
   TFile* f_out = new TFile("result/acc/acc.root", "RECREATE");
-  TH1* h1_x1_acc  = new TH1D("h1_x1_acc" , "", 40, 0.0, 1.0);
-  TH1* h1_x2_acc  = new TH1D("h1_x2_acc" , "", 20, 0.0, 0.5);
-  TH1* h1_pT_acc  = new TH1D("h1_pT_acc" , "", 20, 0.0, 2.0);
-  TH1* h1_x1_acc2 = new TH1D("h1_x1_acc2", "", 40, 0.0, 1.0);
-  TH1* h1_x2_acc2 = new TH1D("h1_x2_acc2", "", 20, 0.0, 0.5);
-  TH1* h1_pT_acc2 = new TH1D("h1_pT_acc2", "", 20, 0.0, 2.0);
+  TH1* h1_mass_acc  = new TH1D("h1_mass_acc" , "", 50,    0, 10);
+  TH1* h1_xF_acc    = new TH1D("h1_xF_acc"   , "", 30, -0.2, 1.0);
+  TH1* h1_x1_acc    = new TH1D("h1_x1_acc"   , "", 40,  0.0, 1.0);
+  TH1* h1_x2_acc    = new TH1D("h1_x2_acc"   , "", 20,  0.0, 0.5);
+  TH1* h1_pT_acc    = new TH1D("h1_pT_acc"   , "", 20,  0.0, 2.0);
+  TH1* h1_mass_acc2 = new TH1D("h1_mass_acc2", "", 50,    0, 10);
+  TH1* h1_xF_acc2   = new TH1D("h1_xF_acc2"  , "", 30, -0.2, 1.0);
+  TH1* h1_x1_acc2   = new TH1D("h1_x1_acc2"  , "", 40,  0.0, 1.0);
+  TH1* h1_x2_acc2   = new TH1D("h1_x2_acc2"  , "", 20,  0.0, 0.5);
+  TH1* h1_pT_acc2   = new TH1D("h1_pT_acc2"  , "", 20,  0.0, 2.0);
 
   SRawMCEvent* raw = 0;
   SRecEvent  * rec = 0;
@@ -159,9 +182,11 @@ void AnaAcc(const char* fn_list, const int rs_id)
     }
     if (i_dim_best >= 0) {
       SRecDimuon dim = rec->getDimuon(i_dim_best);
-      h1_x1_acc->Fill(dim.x1, weight);
-      h1_x2_acc->Fill(dim.x2, weight);
-      h1_pT_acc->Fill(dim.pT, weight);
+      h1_mass_acc->Fill(dim.mass, weight);
+      h1_xF_acc  ->Fill(dim.xF  , weight);
+      h1_x1_acc  ->Fill(dim.x1  , weight);
+      h1_x2_acc  ->Fill(dim.x2  , weight);
+      h1_pT_acc  ->Fill(dim.pT  , weight);
     }
     
     i_dim_best = -1;
@@ -189,9 +214,11 @@ void AnaAcc(const char* fn_list, const int rs_id)
     }
     if (i_dim_best >= 0) {
       SRecDimuon dim = rec->getDimuon(i_dim_best);
-      h1_x1_acc2->Fill(dim.x1, weight);
-      h1_x2_acc2->Fill(dim.x2, weight);
-      h1_pT_acc2->Fill(dim.pT, weight);
+      h1_mass_acc2->Fill(dim.mass, weight);
+      h1_xF_acc2  ->Fill(dim.xF  , weight);
+      h1_x1_acc2  ->Fill(dim.x1  , weight);
+      h1_x2_acc2  ->Fill(dim.x2  , weight);
+      h1_pT_acc2  ->Fill(dim.pT  , weight);
     }
   }
   cout << endl;

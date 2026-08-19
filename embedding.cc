@@ -76,6 +76,7 @@ void embedding(const string ds, const int tgt, const string raw_name, const stri
       tree_mc->GetEntry(i_evt_mc);
       tree_nim3->GetEntry(list_evt_idx_nim3.at(i_evt_mc));
       raw_mc->mergeEvent(*raw_nim3);
+      raw_mc->setEmbeddedEventInfo(raw_nim3->getRunID(), raw_nim3->getSpillID(), raw_nim3->getEventID());
       tree_out->Fill();
       h1_inte_emb->Fill(intensity);
     }

@@ -16,7 +16,8 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
        << "N of entries = " << n_ent << endl;
 
   TH1* h1_cnt  = new TH1D("h1_cnt", "", 10, 0.5, 10.5);
-  TH1* h1_ndim = new TH1D("h1_ndim", ";N of dimuons/event;", 10, -0.5, 9.5);
+  TH1* h1_rec_st = new TH1D("h1_rec_st", "", 50, -49.5, 0.5);
+  TH1* h1_ndim   = new TH1D("h1_ndim"  , ";N of dimuons/event;", 10, -0.5, 9.5);
   TH1* h1_mass_t = new TH1D("h1_mass_t",  ";True mass;", 100, 0, 10);
   TH1* h1_mass_r = new TH1D("h1_mass_r", ";Reco. mass;", 100, 0, 10);
   TH1* h1_mass_d = new TH1D("h1_mass_d", ";M_{reco} - M_{true};", 100, -2, 2);
@@ -26,7 +27,7 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
   TH1* h1_z_t = new TH1D("h1_z_t",  ";True z-vertex;", 100, -230, -30);
   TH1* h1_z_r = new TH1D("h1_z_r", ";Reco. z-vertex;", 100, -230, -30);
   TH1* h1_z_d = new TH1D("h1_z_d", ";z_{reco} - z_{true};", 100, -100, 100);
-  
+
   SRawMCEvent* raw = 0;
   SRecEvent  * rec = 0;
   tree->SetBranchAddress("rawEvent", &raw);
@@ -36,7 +37,7 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
     else if ( (i_ent+1) % (n_ent/100   ) == 0) cout << "." << flush;
     tree->GetEntry(i_ent);
     h1_cnt->Fill(1);
-    
+
     double mass_t = raw->mass;
     double xF_t   = raw->xF;
     double zvtx_t = raw->vtx.Z();
@@ -45,11 +46,16 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
     h1_xF_t  ->Fill(xF_t);
     h1_z_t   ->Fill(zvtx_t);
 
+    int rec_st = rec->getRecStatus();
+    h1_rec_st->Fill(rec_st);
+    
     int n_dim = rec->getNDimuons();
     h1_ndim->Fill(n_dim);
     for (int i_dim = 0; i_dim < n_dim; i_dim++) {
       h1_cnt->Fill(2);      
       SRecDimuon dim = rec->getDimuon(i_dim);
+      //SRecTrack trk_pos = rec->getTrack(dim.trackID_pos);
+      //SRecTrack trk_neg = rec->getTrack(dim.trackID_neg);
       double mass_r  = dim.mass;
       double xF_r    = dim.xF;
       double zvtx_r  = dim.vtx.Z();
@@ -61,6 +67,7 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
       h1_z_d   ->Fill(zvtx_r - zvtx_t);
     }
   }
+  cout << endl;
   
   gSystem->mkdir("result/vertex", true);
   ofstream ofs("result/vertex/result.txt");
@@ -72,6 +79,7 @@ void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
   TCanvas* c1 = new TCanvas("c1", "");
   c1->SetGrid();
 
+  h1_rec_st->Draw();  c1->SaveAs("result/vertex/h1_rec_st.pdf");
   h1_ndim  ->Draw();  c1->SaveAs("result/vertex/h1_ndim.pdf");
   h1_mass_t->Draw();  c1->SaveAs("result/vertex/h1_mass_t.pdf");
   h1_mass_r->Draw();  c1->SaveAs("result/vertex/h1_mass_r.pdf");

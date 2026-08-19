@@ -1,14 +1,14 @@
 source /exp/seaquest/app/software/osg/software/AL9/setup.sh
 source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0728/setup.sh
-#source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0705d/setup.sh
+#source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0803c/setup.sh
 
 export GEN_MODE=dy
 export RUN_MODE=run3  # run2 run3 run5
 export TGT_MODE=lh2
-export ACC_MODE=acc
+export ACC_MODE=acc # 4pi acc
 export RAW_NAME=gmc_${GEN_MODE}_${TGT_MODE}_${RUN_MODE}_${ACC_MODE}
 
-export BG_MODE=messy # clean messy
+export BG_MODE=clean # clean messy
 
 export DIR_AUTO=auto_file
 export DIR_DATA_BASE=/pnfs/e906/scratch/users/$USER/data_production/GMC
@@ -22,6 +22,14 @@ case $RUN_MODE in
     *    ) ROADSET_ID=0  ;;
 esac
 export ROADSET_ID
+
+TGT_ID=
+case $TGT_MODE in
+    lh2 ) TGT_ID=1 ;;
+    ld2 ) TGT_ID=3 ;;
+    *   ) TGT_ID=0 ;;
+esac
+export TGT_ID
 
 OPT_NAME=
 case $RUN_MODE in

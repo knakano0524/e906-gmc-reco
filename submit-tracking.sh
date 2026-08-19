@@ -37,6 +37,7 @@ echo -n "Making $DIR_AUTO/$FN_CONF... "
     echo "osg"
     echo "localmap"
     echo "grid-args = '--expected-lifetime-eq-'$JOB_LIFE''"
+    #echo "n-events = 100"
 } >$DIR_AUTO/$FN_CONF
 echo " ...done."
 

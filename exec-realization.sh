@@ -31,6 +31,7 @@ for (( II = 0 ; II < $N_INPUT ; II++ )) ; do
     fi
     OPTS_FILE=$KTRACKER_ROOT/opts/mc_$OPT_NAME.opts
     SEED=1
+    #$KTRACKER_ROOT/realization $OPTS_FILE $DIR_IN/$FNAME $DIR_OUT/$FNAME $SEED
     $KTRACKER_ROOT/filtering_and_realization $OPTS_FILE $DIR_IN $DIR_OUT $FNAME $SEED
     RET=$?
     if [ $RET -eq 0 ] ; then

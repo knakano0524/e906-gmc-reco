@@ -7,6 +7,14 @@ echo "BG_MODE  = $BG_MODE"
 
 mkdir -p $DIR_AUTO
 
+if [ $ACC_MODE = 4pi ] ; then
+    DIR=$DIR_DATA_BASE/data/$RAW_NAME
+    if [ -e $DIR ] ; then
+	find $DIR -name "user_*.root" | sort >$DIR_AUTO/list_ana_4pi.txt
+    fi
+    exit
+fi
+
 #DIR=$DIR_DATA_BASE/data/$RAW_NAME
 DIR=$DIR_DATA_BASE/clean/$RAW_NAME
 #DIR=$DIR_DATA_BASE/$BG_MODE/$RAW_NAME

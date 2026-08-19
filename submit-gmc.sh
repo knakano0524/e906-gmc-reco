@@ -31,11 +31,12 @@ echo "ACC = $ACC"
 
 N_EVT_GEN=100000
 N_RUN_GEN=100
+RUN_1ST=1
 echo "N_EVT_GEN = $N_EVT_GEN"
 echo "N_RUN_GEN = $N_RUN_GEN"
 
 runGMC.py --grid --preset=$PRESET --Record=ROOT --server=e906-db1.fnal.gov \
 	  --raw-name=$RAW_NAME \
-	  --n-events=$N_EVT_GEN --n-subruns=$N_RUN_GEN --first-subrun=1 \
+	  --n-events=$N_EVT_GEN --n-subruns=$N_RUN_GEN --first-subrun=$RUN_1ST \
 	  --Target=$TARGET --EventPosition=Target --Generator=DY --Acceptance=$ACC \
 	  --gmc-devel
