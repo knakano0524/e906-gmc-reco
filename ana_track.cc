@@ -1,5 +1,5 @@
+#include "inc/Common.h"
 R__LOAD_LIBRARY(kTracker)
-
 TCanvas* c1;
 
 void DrawPosNegHist(TH2* h2)
@@ -22,14 +22,12 @@ void DrawPosNegHist(TH2* h2)
   delete h1_pos;
 }
 
-void ana_track(const char* fn_list="auto_file/list_ana_track.txt")
+void ana_track(const char* bg_mode="clean")
 {
   TChain* tree = new TChain("save");
-  
-  ifstream ifs(fn_list);
-  string fn_in;
-  while (ifs >> fn_in) tree->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data = (string)"track/${RAW_NAME_BASE}_acc/" + bg_mode + "/track";
+  vector<string> list_in = FindFiles(dir_data, "track_*.root");
+  for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
 
   //tree->Print();
   unsigned int n_tree = tree->GetNtrees();

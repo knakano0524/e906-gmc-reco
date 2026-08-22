@@ -1,13 +1,17 @@
 #!/bin/bash
 DIR_TOP=$(dirname $(readlink -f $BASH_SOURCE))
-
 source $DIR_TOP/setup.sh
+
+ACC_MODE=$1
+SetRawName $ACC_MODE
 echo "RAW_NAME = $RAW_NAME"
 
 PRESET=
 case $RUN_MODE in
     run2 ) PRESET=run2 ;;
+    rs62 ) PRESET=rs62 ;;
     run3 ) PRESET=run3 ;;
+    rs70 ) PRESET=rs70 ;;
     run5 ) PRESET=run5 ;;
     * ) echo "ERROR: Unknown RUN_MODE ($RUN_MODE)." ; exit 0 ;;
 esac

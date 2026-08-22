@@ -1,7 +1,9 @@
 #!/bin/bash
 DIR_TOP=$(dirname $(readlink -f $BASH_SOURCE))
-
 source $DIR_TOP/setup.sh
+
+SetRawName acc
+SetBgMode  $1
 echo "RAW_NAME = $RAW_NAME"
 echo "BG_MODE  = $BG_MODE"
 

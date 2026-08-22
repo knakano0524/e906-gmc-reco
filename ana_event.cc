@@ -3,8 +3,8 @@
 R__LOAD_LIBRARY(kTracker)
 using namespace std;
 
-void ana_event(const char* fn_list="auto_file/list_ana_event.txt")
-{
+void ana_event(const string bg_mode="clean")
+{  
   int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
   cout << "Roadset " << rs_id << endl;
   auto list_road_pos_top = UtilTrigger::ReadRoadList(rs_id, +1, +1);
@@ -18,11 +18,9 @@ void ana_event(const char* fn_list="auto_file/list_ana_event.txt")
        << list_road_neg_bot.size() << " neg bot\n";
   
   TChain* tree = new TChain("save");
-  
-  ifstream ifs(fn_list);
-  string fn_in;
-  while (ifs >> fn_in) tree->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data = bg_mode + "/" + "${RAW_NAME_BASE}_acc";
+  vector<string> list_in = FindFiles(dir_data, "user_*.root");
+  for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
 
   gSystem->mkdir("result/event", true);
   TFile* f_out = new TFile("result/event/result.root", "RECREATE");

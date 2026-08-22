@@ -3,8 +3,8 @@
 ## It is similar to `seaquest-ktracker/scripts/embed/process_realization.sh`,
 ## but automatically sets the parameters.
 DIR_TOP=$(dirname $(readlink -f $BASH_SOURCE))
-
 source $DIR_TOP/setup.sh
+SetRawName acc
 echo "RAW_NAME = $RAW_NAME"
 
 DIR_IN=$DIR_DATA_BASE/data/$RAW_NAME

@@ -7,7 +7,7 @@ R__LOAD_LIBRARY(kTracker)
 using namespace std;
 void DrawOneTrackDist(TCanvas* c1, TH3* h3);
 
-void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char* fn_list_vtx="auto_file/list_ana_vertex.txt")
+void ana_both(const string bg_mode="clean")
 {
   int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
   cout << "Roadset " << rs_id << endl;
@@ -16,26 +16,22 @@ void ana_both(const char* fn_list_evt="auto_file/list_ana_event.txt", const char
   auto list_road_neg_top = UtilTrigger::ReadRoadList(rs_id, -1, +1);
   auto list_road_neg_bot = UtilTrigger::ReadRoadList(rs_id, -1, -1);
 
-  string fn_opts = gSystem->Getenv("KTRACKER_ROOT");
-  if      (rs_id == 57) fn_opts += "/opts/mc_57_2.opts";
-  else if (rs_id == 67) fn_opts += "/opts/mc_67.opts";
-  else {
-    cout << "Cannot find a proper opts file.  Abort." << endl;
-    exit(1);
-  }
+  string opt_name = gSystem->Getenv("OPT_NAME");
+  string fn_opts  = gSystem->Getenv("KTRACKER_ROOT");
+  fn_opts += "/opts/mc_" + opt_name + ".opts";
+  cout << "fn_opts = " << fn_opts << endl;
   JobOptsSvc::instance()->init(fn_opts.c_str());
   GeomSvc::instance()->init();
   
   TChain* tree_evt = new TChain("save");
-  ifstream ifs(fn_list_evt);
-  string fn_in;
-  while (ifs >> fn_in) tree_evt->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data_evt = bg_mode + "/" + "${RAW_NAME_BASE}_acc";
+  vector<string> list_evt = FindFiles(dir_data_evt, "user_*.root");
+  for (auto it = list_evt.begin(); it != list_evt.end(); it++) tree_evt->Add(it->c_str());
 
   TChain* tree_vtx = new TChain("save");
-  ifs.open(fn_list_vtx);
-  while (ifs >> fn_in) tree_vtx->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data_vtx = (string)"vertex/${RAW_NAME_BASE}_acc/" + bg_mode + "/vertex";
+  vector<string> list_vtx = FindFiles(dir_data_vtx, "vertex_*.root");
+  for (auto it = list_vtx.begin(); it != list_vtx.end(); it++) tree_vtx->Add(it->c_str());
   
   gSystem->mkdir("result/both", true);
   TFile* f_out = new TFile("result/both/result.root", "RECREATE");

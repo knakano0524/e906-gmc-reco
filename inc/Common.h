@@ -3,6 +3,20 @@
 #include <SRecEvent.h>
 #include "UtilTrigger.h"
 
+std::vector<std::string> FindFiles(const std::string dir, const std::string name, const std::string dir_base="$DIR_DATA_BASE")
+{
+  std::string dir_full = dir_base + "/" + dir;
+  char* dir_exp = gSystem->ExpandPathName(dir_full.c_str());
+  std::string comm = (std::string)"find \"" + dir_exp + "\" -name \"" + name + "\" | sort";
+  delete dir_exp;
+  TString tstr = gSystem->GetFromPipe(comm.c_str());
+  std::istringstream iss(tstr.Data());
+  std::vector<std::string> list_file;
+  std::string line;
+  while (getline(iss, line)) list_file.push_back(line);
+  return list_file;
+}
+
 std::vector<int> MakeRoadList(
   const int top_bottom,
   const std::list<int> list_h1,

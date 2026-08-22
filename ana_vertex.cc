@@ -1,13 +1,12 @@
+#include "inc/Common.h"
 R__LOAD_LIBRARY(kTracker)
 
-void ana_vertex(const char* fn_list="auto_file/list_ana_vertex.txt")
+void ana_vertex(const char* bg_mode="clean")
 {
   TChain* tree = new TChain("save");
-  
-  ifstream ifs(fn_list);
-  string fn_in;
-  while (ifs >> fn_in) tree->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data = (string)"vertex/${RAW_NAME_BASE}_acc/" + bg_mode + "/vertex";
+  vector<string> list_in = FindFiles(dir_data, "vertex_*.root");
+  for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
 
   //tree->Print();
   unsigned int n_tree = tree->GetNtrees();

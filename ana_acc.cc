@@ -6,29 +6,26 @@
 #include "inc/UtilCut.h"
 R__LOAD_LIBRARY(kTracker)
 using namespace std;
-void Ana4pi(const char* fn_list);
-void AnaAcc(const char* fn_list, const int rs_id);
+void Ana4pi();
+void AnaAcc(const string bg_mode, const int rs_id);
 void DrawOneKin(TH1* h1_4pi, TH1* h1_acc, TH1* h1_acc2, const char* var);
 
-void ana_acc(const char* fn_list_4pi="auto_file/list_ana_4pi.txt", const char* fn_list_acc="auto_file/list_ana_vertex.txt")
+void ana_acc()
 {
   gSystem->mkdir("result/acc", true);
 
   int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
   cout << "Roadset " << rs_id << endl;
-  string fn_opts = gSystem->Getenv("KTRACKER_ROOT");
-  if      (rs_id == 57) fn_opts += "/opts/mc_57_2.opts";
-  else if (rs_id == 67) fn_opts += "/opts/mc_67.opts";
-  else {
-    cout << "Cannot find a proper opts file.  Abort." << endl;
-    exit(1);
-  }
+  
+  string opt_name = gSystem->Getenv("OPT_NAME");  
+  string fn_opts  = gSystem->Getenv("KTRACKER_ROOT");
+  fn_opts += "/opts/mc_" + opt_name + ".opts";
   JobOptsSvc::instance()->init(fn_opts.c_str());
   GeomSvc::instance()->init();
 
   /// Can skip Ana4pi() and/or AnaAcc() if their outputs are unchanged
-  Ana4pi(fn_list_4pi);
-  AnaAcc(fn_list_acc, rs_id);
+  Ana4pi();
+  AnaAcc("clean", rs_id);
 
   /// Read the 4pi and acc outputs to compute the acceptance.
   const double n_evt_gen = 10e6;
@@ -83,14 +80,13 @@ void ana_acc(const char* fn_list_4pi="auto_file/list_ana_4pi.txt", const char* f
 ////////////////////////////////////////////////////////////////
 /// Functions
 ///
-void Ana4pi(const char* fn_list)
+void Ana4pi()
 {
   cout << "ana_4pi()" << endl;
   TChain* tree = new TChain("save");
-  ifstream ifs(fn_list);
-  string fn_in;
-  while (ifs >> fn_in) tree->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data = "data/${RAW_NAME_BASE}_4pi";
+  vector<string> list_in = FindFiles(dir_data, "user_*.root");
+  for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
   unsigned int n_tree = tree->GetNtrees();
   unsigned int n_ent  = tree->GetEntries();
   cout << "  " << n_tree << " trees, " << n_ent << " entries" << endl;
@@ -123,7 +119,7 @@ void Ana4pi(const char* fn_list)
   f_out->Close();
 }
 
-void AnaAcc(const char* fn_list, const int rs_id)
+void AnaAcc(const string bg_mode, const int rs_id)
 {
   cout << "AnaAcc()" << endl;
   auto list_road_pos_top = UtilTrigger::ReadRoadList(rs_id, +1, +1);
@@ -132,10 +128,9 @@ void AnaAcc(const char* fn_list, const int rs_id)
   auto list_road_neg_bot = UtilTrigger::ReadRoadList(rs_id, -1, -1);
 
   TChain* tree = new TChain("save");
-  ifstream ifs(fn_list);
-  string fn_in;
-  while (ifs >> fn_in) tree->Add(fn_in.c_str());
-  ifs.close();
+  string dir_data = (string)"vertex/${RAW_NAME_BASE}_acc/" + bg_mode + "/vertex";
+  vector<string> list_in = FindFiles(dir_data, "vertex_*.root");
+  for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
   unsigned int n_tree = tree->GetNtrees();
   unsigned int n_ent  = tree->GetEntries();
   cout << "  " << n_tree << " trees, " << n_ent << " entries" << endl;

@@ -7,7 +7,7 @@ R__LOAD_LIBRARY(kTracker)
 using namespace std;
 void CalcAndDrawEff(TH2* h2, const string label);
 
-void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
+void ana_clean_messy()
 {
   int tgt_id = atoi(gSystem->Getenv("TGT_ID"));
   int rs_id  = atoi(gSystem->Getenv("ROADSET_ID"));
@@ -17,49 +17,40 @@ void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
   //auto list_road_neg_top = UtilTrigger::ReadRoadList(rs_id, -1, +1);
   //auto list_road_neg_bot = UtilTrigger::ReadRoadList(rs_id, -1, -1);
 
-  string fn_opts = gSystem->Getenv("KTRACKER_ROOT");
-  if      (rs_id == 57) fn_opts += "/opts/mc_57_2.opts";
-  else if (rs_id == 67) fn_opts += "/opts/mc_67.opts";
-  else {
-    cout << "Cannot find a proper opts file.  Abort." << endl;
-    exit(1);
-  }
+  string opt_name = gSystem->Getenv("OPT_NAME");  
+  string fn_opts  = gSystem->Getenv("KTRACKER_ROOT");
+  fn_opts += "/opts/mc_" + opt_name + ".opts";
+  cout << "fn_opts = " << fn_opts << endl;
   JobOptsSvc::instance()->init(fn_opts.c_str());
   GeomSvc::instance()->init();
   
   TChain* tree_cl = new TChain("save");
+  vector<string> list_cl = FindFiles("vertex/${RAW_NAME_BASE}_acc/clean/vertex", "vertex_*.root");
+  for (auto it = list_cl.begin(); it != list_cl.end(); it++) tree_cl->Add(it->c_str());
+  unsigned int n_tree_cl = tree_cl->GetNtrees();
+  unsigned int n_ent_cl  = tree_cl->GetEntries();
+  cout << "Clean:  " << n_tree_cl << " trees, " << n_ent_cl << " entries" << endl;    
+
   TChain* tree_me = new TChain("save");
-  ifstream ifs(fn_list);
-  string fn_in_cl, fn_in_me;
-  while (ifs >> fn_in_cl >> fn_in_me) {
-    tree_cl->Add(fn_in_cl.c_str());
-    tree_me->Add(fn_in_me.c_str());
-  }
-  ifs.close();
+  vector<string> list_me = FindFiles("vertex/${RAW_NAME_BASE}_acc/messy/vertex", "vertex_*.root");
+  for (auto it = list_me.begin(); it != list_me.end(); it++) tree_me->Add(it->c_str());
+  unsigned int n_tree_me = tree_me->GetNtrees();
+  unsigned int n_ent_me  = tree_me->GetEntries();
+  cout << "Messy:  " << n_tree_me << " trees, " << n_ent_me << " entries" << endl;    
   
   gSystem->mkdir("result/cl_me", true);
   TFile* f_out = new TFile("result/cl_me/result.root", "RECREATE");
   TH1* h1_cnt = new TH1D("h1_cnt", "", 10, 0.5, 10.5);
-  TH2* h2_d1  = new TH2D("h2_d1" , ";D1;N of clean dimuons"   , 16, 0, 400, 4, 0.5, 4.5);
-  TH2* h2_d2  = new TH2D("h2_d2" , ";D2;N of clean dimuons"   , 16, 0, 400, 4, 0.5, 4.5);
-  TH2* h2_d1m = new TH2D("h2_d1m", ";D1-10;N of clean dimuons", 16, 0, 400, 4, 0.5, 4.5);
-  TH2* h2_d2m = new TH2D("h2_d2m", ";D2-10;N of clean dimuons", 16, 0, 400, 4, 0.5, 4.5);
+  TH2* h2_d1  = new TH2D("h2_d1" , ";D1;N of clean dimuons"   , 40, 0, 400, 4, 0.5, 4.5);
+  TH2* h2_d2  = new TH2D("h2_d2" , ";D2;N of clean dimuons"   , 40, 0, 400, 4, 0.5, 4.5);
+  TH2* h2_d1m = new TH2D("h2_d1m", ";D1-10;N of clean dimuons", 40, 0, 400, 4, 0.5, 4.5);
+  TH2* h2_d2m = new TH2D("h2_d2m", ";D2-10;N of clean dimuons", 40, 0, 400, 4, 0.5, 4.5);
   
-  TH2* h2_occ_inte = new TH2D("h2_occ_inte", ";D1;Intensity", 16, 0, 400,  20, 0, 100e3);
+  TH2* h2_occ_inte = new TH2D("h2_occ_inte", ";D1;Intensity", 40, 0, 400,  20, 0, 100e3);
 
   TH2* h2_mass = new TH2D("h2_mass", "! clean & messy;M_{true};M_{reco}", 60, 3, 9,  60, 3, 9);
   TH2* h2_xF   = new TH2D("h2_xF"  , "! clean & messy;xF_{true};xF_{reco}", 60, -0.2, 1.0,  60, -0.2, 1.0);
   
-  //tree_evt->Print();
-  unsigned int n_tree_cl = tree_cl->GetNtrees();
-  unsigned int n_ent_cl  = tree_cl->GetEntries();
-  unsigned int n_ent_me  = tree_me->GetEntries();
-  cout << "n_tree_cl = " << n_tree_cl << ", n_ent_cl = " << n_ent_cl << ", n_ent_me = " << n_ent_me << endl;
-  if (n_ent_cl != n_ent_me) {
-    cout << "!!ERROR!!  n_ent_cl != n_ent_me.  Abort." << endl;
-    exit(1);
-  }
-
   SRecEvent  * rec_cl = 0;
   SRawMCEvent* raw_me = 0;
   SRawMCEvent* org_me = 0;
@@ -68,16 +59,32 @@ void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
   tree_me->SetBranchAddress("rawEvent", &raw_me);
   tree_me->SetBranchAddress("orgEvent", &org_me);
   tree_me->SetBranchAddress("recEvent", &rec_me);
-  for (unsigned int i_ent = 0; i_ent < n_ent_cl; i_ent++) {
-    if      ( (i_ent+1) % (n_ent_cl/100*10) == 0) cout << "o" << flush;
-    else if ( (i_ent+1) % (n_ent_cl/100   ) == 0) cout << "." << flush;
-    tree_cl->GetEntry(i_ent);
-    tree_me->GetEntry(i_ent);
+
+  unsigned int n_evt_missed = 0;
+  unsigned int i_ent_me = 0;
+  for (unsigned int i_ent_cl = 0; i_ent_cl < n_ent_cl; i_ent_cl++) {
+    if      ( (i_ent_cl+1) % (n_ent_cl/100*10) == 0) cout << "o" << flush;
+    else if ( (i_ent_cl+1) % (n_ent_cl/100   ) == 0) cout << "." << flush;
+    tree_cl->GetEntry(i_ent_cl);
     int   run_id = rec_cl->getRunID();
     int event_id = rec_cl->getEventID();
-    if (run_id != rec_me->getRunID() || event_id != rec_me->getEventID()) {
-      cout << "!!ERROR!!  run_id or event_id mismatch.  Abort." << endl;
-      exit(1);
+    bool found = false;
+    while (i_ent_me < n_ent_me) {
+      tree_me->GetEntry(i_ent_me);
+      int rr = rec_me->getRunID();
+      int ee = rec_me->getEventID();
+      if (rr == run_id && ee == event_id) {
+        found = true;
+        break;
+      } else if (rr > run_id || (rr == run_id && ee > event_id)) {
+        break;
+      }
+      i_ent_me++;
+    }
+    if (! found) {
+      n_evt_missed++;
+      if (i_ent_me == n_ent_me - 1) break; // No more candidates in tree_me.
+      continue;
     }
     h1_cnt->Fill(1);
 
@@ -163,6 +170,8 @@ void ana_clean_messy(const char* fn_list="auto_file/list_ana_clean_messy.txt")
       h2_mass->Fill(mass_t, dim.mass);
       h2_xF  ->Fill(xF_t  , dim.xF  );
     }
+    
+    i_ent_me++;    
   }
   cout << endl;
   
