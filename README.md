@@ -44,6 +44,27 @@ The following sub-directories are used by default:
   Event Analysis (Clean & Messy)
 ```
 
+A set of commands needed per (process, dataset, target)
+```
+./submit-gmc.sh 4pi
+./submit-gmc.sh acc
+./exec-realization.sh
+./submit-tracking.sh clean
+./submit-vertexing.sh clean
+root -b ana_event.cc
+root -b ana_track.cc
+root -b ana_vertex.cc
+root -b ana_trig_acc.cc
+root -b ana_acc.cc
+./exec-embedding.sh
+./submit-tracking.sh messy
+./submit-vertexing.sh messy
+root -b 'ana_event.cc("messy")'
+root -b 'ana_track.cc("messy")'
+root -b 'ana_vertex.cc("messy")'
+root -b 'ana_trig_acc.cc("messy")'
+root -b  ana_clean_messy.cc
+```
 
 ## GMC Production
 
@@ -57,13 +78,12 @@ jobsub_submit -G seaquest file:///usr/bin/printenv
 
 You then execute `submit-gmc.sh`:
 ```
-./submit-gmc.sh
+./submit-gmc.sh acc
 ```
 
 You can/should use `ana_event.cc` to confirm that generated events are appropriate.
 you can run the following commands even if a part of jobs is still running:
 ```
-./make-list-for-ana.sh
 root -b ana_event.cc
 ```
 The 1st command is to list up all available event files to be analyzed.
@@ -107,14 +127,13 @@ You can find details of the embedding algorithm in it.
 
 You simply execute it to submit tracking jobs:
 ```
-./submit-tracking.sh
+./submit-tracking.sh clean
 ```
 
 One job usually takes 1-2 hours for Clean and 3-12 hours for Messy.
 
 You can/should check tracked events:
 ```
-./make-list-for-ana.sh
 root -b ana_track.cc
 ```
 
@@ -125,12 +144,11 @@ root -b ana_track.cc
 
 You simply execute it to submit vertexing jobs:
 ```
-./submit-vertexing.sh
+./submit-vertexing.sh clean
 ```
 
 You can/should check vertexed events:
 ```
-./make-list-for-ana.sh
 root -b ana_vertex.cc
 root -b ana_both.cc
 ```

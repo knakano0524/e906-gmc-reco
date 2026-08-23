@@ -9,7 +9,7 @@ echo "BG_MODE  = $BG_MODE"
 
 DIR_IN=$DIR_DATA_BASE/track/$RAW_NAME/$BG_MODE
 DIR_OUT=$DIR_DATA_BASE/vertex/$RAW_NAME/$BG_MODE
-FN_LIST=list_for_vertexing.txt
+FN_LIST=list_vertexing_${RAW_NAME}_${BG_MODE}.txt
 echo "DIR_IN   = $DIR_IN"
 echo "DIR_OUT  = $DIR_OUT"
 echo "FN_LIST  = $FN_LIST"

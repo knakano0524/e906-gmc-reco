@@ -7,7 +7,7 @@ R__LOAD_LIBRARY(kTracker)
 using namespace std;
 void DrawOneTrackDist(TCanvas* c1, TH3* h3);
 
-void ana_both(const string bg_mode="clean")
+void ana_trig_acc(const string bg_mode="clean")
 {
   int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
   cout << "Roadset " << rs_id << endl;
@@ -81,7 +81,7 @@ void ana_both(const string bg_mode="clean")
     int   run_id = raw->getRunID();
     int event_id = raw->getEventID();
     bool found = false;
-    while (true) {
+    while (i_ent_vtx < n_ent_vtx) {
       tree_vtx->GetEntry(i_ent_vtx);
       int rr = rec->getRunID();
       int ee = rec->getEventID();
@@ -89,15 +89,12 @@ void ana_both(const string bg_mode="clean")
         found = true;
         break;
       } else if (rr > run_id || (rr == run_id && ee > event_id)) {
-        n_evt_missed++;
-        break;
-      } else if (i_ent_vtx == n_ent_vtx - 1) {
-        n_evt_missed++;
         break;
       }
       i_ent_vtx++;
     }
     if (! found) {
+      n_evt_missed++;
       if (i_ent_vtx == n_ent_vtx - 1) break; // No more candidates in tree_vtx.
       continue;
     }
@@ -320,7 +317,6 @@ void ana_both(const string bg_mode="clean")
       auto matched_pos_bot = UtilTrigger::FindEnabledRoads(list_road_trk_pos, list_road_pos_bot);
       auto matched_neg_top = UtilTrigger::FindEnabledRoads(list_road_trk_neg, list_road_neg_top);
       auto matched_neg_bot = UtilTrigger::FindEnabledRoads(list_road_trk_neg, list_road_neg_bot);
-      //cout << "N " << matched_pos_top.size() << " " << matched_neg_bot.size() << " | " << matched_pos_bot.size() << " " << matched_neg_top.size() << endl;
       if ( (matched_pos_top.size() > 0 && matched_neg_bot.size() > 0) ||
            (matched_pos_bot.size() > 0 && matched_neg_top.size() > 0)   ) {
         h1_cnt->Fill(5);
