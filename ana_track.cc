@@ -1,5 +1,6 @@
 #include "inc/Common.h"
 R__LOAD_LIBRARY(kTracker)
+string dir_out;
 TCanvas* c1;
 
 void DrawPosNegHist(TH2* h2)
@@ -17,7 +18,7 @@ void DrawPosNegHist(TH2* h2)
 
   string name = h2->GetName();
   if (name.substr(0, 3) == "h2_") name = "h1_" + name.substr(3, string::npos);
-  c1->SaveAs(Form("result/track/%s.pdf", name.c_str()));
+  c1->SaveAs( Form("%s/%s.pdf", dir_out.c_str(), name.c_str()) );
   delete h1_neg;
   delete h1_pos;
 }
@@ -122,9 +123,10 @@ void ana_track(const char* bg_mode="clean")
     }
   }
   cout << endl;
-  
-  gSystem->mkdir("result/track", true);
-  ofstream ofs("result/track/result.txt");
+
+  dir_out = (string)"result/track_" + bg_mode;
+  gSystem->mkdir(dir_out.c_str(), true);
+  ofstream ofs((dir_out+"/result.txt").c_str());
   ofs << "N of trees  = " << n_tree << "\n"
       << "N of events = " << h1_cnt->GetBinContent(1) << "\n"
       << "N of tracks = " << h1_cnt->GetBinContent(2) << "\n";
@@ -133,7 +135,7 @@ void ana_track(const char* bg_mode="clean")
   c1 = new TCanvas("c1", "");
   c1->SetGrid();
 
-  h1_ntrk->Draw();  c1->SaveAs("result/track/h1_ntrk.pdf");
+  h1_ntrk->Draw();  c1->SaveAs( (dir_out+"/h1_ntrk.pdf").c_str() );
 
   DrawPosNegHist(h2_nhit);
   DrawPosNegHist(h2_chi2);

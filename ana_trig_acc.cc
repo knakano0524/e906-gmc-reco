@@ -33,8 +33,8 @@ void ana_trig_acc(const string bg_mode="clean")
   vector<string> list_vtx = FindFiles(dir_data_vtx, "vertex_*.root");
   for (auto it = list_vtx.begin(); it != list_vtx.end(); it++) tree_vtx->Add(it->c_str());
   
-  gSystem->mkdir("result/both", true);
-  TFile* f_out = new TFile("result/both/result.root", "RECREATE");
+  gSystem->mkdir("result/trig_acc", true);
+  TFile* f_out = new TFile("result/trig_acc/result.root", "RECREATE");
   TH1* h1_cnt = new TH1D("h1_cnt", "", 10, 0.5, 10.5);
   TH2* h2_mass_xF_tbbt    = new TH2D("h2_mass_xF_tbbt"   ,       "T+B/B+T;Mass;xF", 50, 0, 10, 30, -0.2, 1.0);
   TH2* h2_mass_xF_fpga    = new TH2D("h2_mass_xF_fpga"   ,         "FPGA1;Mass;xF", 50, 0, 10, 30, -0.2, 1.0);
@@ -377,7 +377,7 @@ void ana_trig_acc(const string bg_mode="clean")
     cout << "!!WARNING!!  n_evt_missed = " << n_evt_missed << endl;
   }
   
-  ofstream ofs("result/both/result.txt");
+  ofstream ofs("result/trig_acc/result.txt");
   ofs << "N of trees   = " << n_tree_evt << "\n"
       << "N of all events            = " << n_ent_evt << "\n"
       << "N of matched events        = " << h1_cnt->GetBinContent(1) << "\n"
@@ -395,10 +395,10 @@ void ana_trig_acc(const string bg_mode="clean")
   int opt_stat = gStyle->GetOptStat();
   gStyle->SetOptStat(0);
   c1->SetLogz(true);
-  h2_mass_xF_tbbt   ->Draw("colz");  c1->SaveAs("result/both/h2_mass_xF_01_tbbt.pdf");
-  h2_mass_xF_fpga   ->Draw("colz");  c1->SaveAs("result/both/h2_mass_xF_02_fpga.pdf");
-  h2_mass_xF_rec    ->Draw("colz");  c1->SaveAs("result/both/h2_mass_xF_03_rec.pdf");
-  h2_mass_xF_rec_mat->Draw("colz");  c1->SaveAs("result/both/h2_mass_xF_04_rec_mat.pdf");
+  h2_mass_xF_tbbt   ->Draw("colz");  c1->SaveAs("result/trig_acc/h2_mass_xF_01_tbbt.pdf");
+  h2_mass_xF_fpga   ->Draw("colz");  c1->SaveAs("result/trig_acc/h2_mass_xF_02_fpga.pdf");
+  h2_mass_xF_rec    ->Draw("colz");  c1->SaveAs("result/trig_acc/h2_mass_xF_03_rec.pdf");
+  h2_mass_xF_rec_mat->Draw("colz");  c1->SaveAs("result/trig_acc/h2_mass_xF_04_rec_mat.pdf");
   c1->SetLogz(false);
 
   TH1* h1_zvtx[5];
@@ -407,7 +407,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_zvtx[type]->SetLineColor(type);
     h1_zvtx[type]->Draw( type==1 ? "HIST" : "HISTsame" );    
   }
-  c1->SaveAs("result/both/h1_zvtx.pdf");
+  c1->SaveAs("result/trig_acc/h1_zvtx.pdf");
 
   TH1* h1_rec_st[5];
   for (int type = 1; type <= 4; type++) {
@@ -416,7 +416,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_rec_st[type]->SetLineColor(type);
     h1_rec_st[type]->Draw( type==1 ? "HIST" : "HISTsame" );    
   }
-  c1->SaveAs("result/both/h1_rec_st.pdf");
+  c1->SaveAs("result/trig_acc/h1_rec_st.pdf");
 
   TH1* h1_ntrk[5]; // [type]
   h3_ntrk->GetYaxis()->SetRange(3, 3); // pos
@@ -428,7 +428,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_ntrk_pos.pdf");
+  c1->SaveAs("result/trig_acc/h1_ntrk_pos.pdf");
   h3_ntrk->GetYaxis()->SetRange(1, 1); // neg
   for (int type = 1; type <= 4; type++) {
     h3_ntrk->GetZaxis()->SetRange(type, type);
@@ -438,7 +438,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_ntrk_neg.pdf");
+  c1->SaveAs("result/trig_acc/h1_ntrk_neg.pdf");
 
   TH1* h1_px_vtx[5];
   h3_px_vtx->GetYaxis()->SetRange(3, 3); // pos
@@ -450,7 +450,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_px_vtx_pos.pdf");
+  c1->SaveAs("result/trig_acc/h1_px_vtx_pos.pdf");
   h3_px_vtx->GetYaxis()->SetRange(1, 1); // neg
   for (int type = 1; type <= 4; type++) {
     h3_px_vtx->GetZaxis()->SetRange(type, type);
@@ -460,7 +460,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_px_vtx_neg.pdf");
+  c1->SaveAs("result/trig_acc/h1_px_vtx_neg.pdf");
 
   TH1* h1_py_vtx[5];
   h3_py_vtx->GetYaxis()->SetRange(3, 3); // pos
@@ -472,7 +472,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_py_vtx_pos.pdf");
+  c1->SaveAs("result/trig_acc/h1_py_vtx_pos.pdf");
   h3_py_vtx->GetYaxis()->SetRange(1, 1); // neg
   for (int type = 1; type <= 4; type++) {
     h3_py_vtx->GetZaxis()->SetRange(type, type);
@@ -482,7 +482,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_py_vtx_neg.pdf");
+  c1->SaveAs("result/trig_acc/h1_py_vtx_neg.pdf");
 
   TH1* h1_pz_vtx[5];
   h3_pz_vtx->GetYaxis()->SetRange(3, 3); // pos
@@ -494,7 +494,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_pz_vtx_pos.pdf");
+  c1->SaveAs("result/trig_acc/h1_pz_vtx_pos.pdf");
   h3_pz_vtx->GetYaxis()->SetRange(1, 1); // neg
   for (int type = 1; type <= 4; type++) {
     h3_pz_vtx->GetZaxis()->SetRange(type, type);
@@ -504,7 +504,7 @@ void ana_trig_acc(const string bg_mode="clean")
     h1_ntrk[type]->SetTitle("");    
     h1_ntrk[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   }
-  c1->SaveAs("result/both/h1_pz_vtx_neg.pdf");
+  c1->SaveAs("result/trig_acc/h1_pz_vtx_neg.pdf");
 
   ///
   /// 2D acceptance plots
@@ -514,21 +514,21 @@ void ana_trig_acc(const string bg_mode="clean")
   h2_acc_fpga->SetTitle("Trigger acceptance");
   h2_acc_fpga->Draw("colz");
   h2_acc_fpga->GetZaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/both/h2_acc_02_fpga.pdf");
+  c1->SaveAs("result/trig_acc/h2_acc_02_fpga.pdf");
 
   TH2* h2_acc_rec = (TH2*)h2_mass_xF_rec->Clone("h2_acc_rec");
   h2_acc_rec->Divide(h2_mass_xF_tbbt);
   h2_acc_rec->SetTitle("Trigger acceptance");
   h2_acc_rec->Draw("colz");
   h2_acc_rec->GetZaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/both/h2_acc_03_rec.pdf");
+  c1->SaveAs("result/trig_acc/h2_acc_03_rec.pdf");
 
   TH2* h2_acc_rec_mat = (TH2*)h2_mass_xF_rec_mat->Clone("h2_acc_rec_mat");
   h2_acc_rec_mat->Divide(h2_mass_xF_tbbt);
   h2_acc_rec_mat->SetTitle("Trigger acceptance");
   h2_acc_rec_mat->Draw("colz");
   h2_acc_rec_mat->GetZaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/both/h2_acc_04_rec_mat.pdf");
+  c1->SaveAs("result/trig_acc/h2_acc_04_rec_mat.pdf");
 
   ///
   /// 1D acceptance plots
@@ -558,7 +558,7 @@ void ana_trig_acc(const string bg_mode="clean")
   h1_acc_fpga_mass->GetYaxis()->SetRangeUser(0, 1);
   h1_acc_rec_mass    ->Draw("HISTsame");
   h1_acc_rec_mat_mass->Draw("HISTsame");
-  c1->SaveAs("result/both/h1_acc_mass.pdf");
+  c1->SaveAs("result/trig_acc/h1_acc_mass.pdf");
 
   TH1* h1_xF_tbbt        = h2_mass_xF_tbbt   ->ProjectionY("h1_xF_tbbt"       , bin_mass_lo, bin_mass_hi);
   TH1* h1_acc_fpga_xF    = h2_mass_xF_fpga   ->ProjectionY("h1_acc_fpga_xF"   , bin_mass_lo, bin_mass_hi);
@@ -576,7 +576,7 @@ void ana_trig_acc(const string bg_mode="clean")
   h1_acc_fpga_xF->GetYaxis()->SetRangeUser(0, 1);  
   h1_acc_rec_xF    ->Draw("HISTsame");
   h1_acc_rec_mat_xF->Draw("HISTsame");
-  c1->SaveAs("result/both/h1_acc_xF.pdf");
+  c1->SaveAs("result/trig_acc/h1_acc_xF.pdf");
 
   ///
   /// Track dist.
@@ -608,7 +608,7 @@ void ana_trig_acc(const string bg_mode="clean")
   //    h1[type]->SetLineColor(type);
   //    h1[type]->Draw( type==1 ? "HIST" : "HISTsame" );
   //  }
-  //  c1->SaveAs( Form("result/both/h1_nhit_st%i.pdf", st) );
+  //  c1->SaveAs( Form("result/trig_acc/h1_nhit_st%i.pdf", st) );
   //  for (int type = 1; type <= 4; type++) delete h1[type];
   //}
   
@@ -628,35 +628,35 @@ void DrawOneTrackDist(TCanvas* c1, TH3* h3)
   h2_01->SetName("h2_01");
   h2_01->SetTitle("");
   h2_01->Draw("colz");
-  c1->SaveAs( ("result/both/h2_"+name+"_01_tbbt.pdf").c_str() );
+  c1->SaveAs( ("result/trig_acc/h2_"+name+"_01_tbbt.pdf").c_str() );
 
   h3->GetZaxis()->SetRange(2, 2);
   TH1* h2_02 = h3->Project3D("yx");
   h2_02->SetName("h2_02");
   h2_02->SetTitle("");
   h2_02->Draw("colz");
-  c1->SaveAs( ("result/both/h2_"+name+"_02_fpga.pdf").c_str() );
+  c1->SaveAs( ("result/trig_acc/h2_"+name+"_02_fpga.pdf").c_str() );
 
   h3->GetZaxis()->SetRange(3, 3);
   TH1* h2_03 = h3->Project3D("yx");
   h2_03->SetName("h2_03");
   h2_03->SetTitle("");
   h2_03->Draw("colz");
-  c1->SaveAs( ("result/both/h2_"+name+"_03_rec.pdf").c_str() );
+  c1->SaveAs( ("result/trig_acc/h2_"+name+"_03_rec.pdf").c_str() );
 
   //h3->GetZaxis()->SetRange(4, 4);
   //TH1* h2_04 = h3->Project3D("yx");
   //h2_04->SetName("h2_04");
   //h2_04->SetTitle("");
   //h2_04->Draw("colz");
-  //c1->SaveAs( ("result/both/h2_"+name+"_04_rec_mat.pdf").c_str() );
+  //c1->SaveAs( ("result/trig_acc/h2_"+name+"_04_rec_mat.pdf").c_str() );
 
   ((TH2*)h2_02)->Rebin2D(2, 2);
   ((TH2*)h2_03)->Rebin2D(2, 2);
   h2_03->Divide(h2_02);
   h2_03->GetZaxis()->SetRangeUser(0, 1);
   h2_03->Draw("colz");
-  c1->SaveAs( ("result/both/h2_"+name+"_03to02.pdf").c_str() );
+  c1->SaveAs( ("result/trig_acc/h2_"+name+"_03to02.pdf").c_str() );
   
   //delete h2_01;
   delete h2_02;

@@ -67,9 +67,10 @@ void ana_vertex(const char* bg_mode="clean")
     }
   }
   cout << endl;
-  
-  gSystem->mkdir("result/vertex", true);
-  ofstream ofs("result/vertex/result.txt");
+
+  string dir_out = (string)"result/vertex_" + bg_mode;
+  gSystem->mkdir(dir_out.c_str(), true);
+  ofstream ofs((dir_out+"/result.txt").c_str());
   ofs << "N of trees   = " << n_tree << "\n"
       << "N of events  = " << h1_cnt->GetBinContent(1) << "\n"
       << "N of dimuons = " << h1_cnt->GetBinContent(2) << "\n";
@@ -78,17 +79,17 @@ void ana_vertex(const char* bg_mode="clean")
   TCanvas* c1 = new TCanvas("c1", "");
   c1->SetGrid();
 
-  h1_rec_st->Draw();  c1->SaveAs("result/vertex/h1_rec_st.pdf");
-  h1_ndim  ->Draw();  c1->SaveAs("result/vertex/h1_ndim.pdf");
-  h1_mass_t->Draw();  c1->SaveAs("result/vertex/h1_mass_t.pdf");
-  h1_mass_r->Draw();  c1->SaveAs("result/vertex/h1_mass_r.pdf");
-  h1_mass_d->Draw();  c1->SaveAs("result/vertex/h1_mass_d.pdf");
-  h1_xF_t  ->Draw();  c1->SaveAs("result/vertex/h1_xF_t.pdf");
-  h1_xF_r  ->Draw();  c1->SaveAs("result/vertex/h1_xF_r.pdf");
-  h1_xF_d  ->Draw();  c1->SaveAs("result/vertex/h1_xF_d.pdf");
-  h1_z_t   ->Draw();  c1->SaveAs("result/vertex/h1_z_t.pdf");
-  h1_z_r   ->Draw();  c1->SaveAs("result/vertex/h1_z_r.pdf");
-  h1_z_d   ->Draw();  c1->SaveAs("result/vertex/h1_z_d.pdf");
+  h1_rec_st->Draw();  c1->SaveAs( (dir_out+"/h1_rec_st.pdf").c_str() );
+  h1_ndim  ->Draw();  c1->SaveAs( (dir_out+"/h1_ndim.pdf"  ).c_str() );
+  h1_mass_t->Draw();  c1->SaveAs( (dir_out+"/h1_mass_t.pdf").c_str() );
+  h1_mass_r->Draw();  c1->SaveAs( (dir_out+"/h1_mass_r.pdf").c_str() );
+  h1_mass_d->Draw();  c1->SaveAs( (dir_out+"/h1_mass_d.pdf").c_str() );
+  h1_xF_t  ->Draw();  c1->SaveAs( (dir_out+"/h1_xF_t.pdf"  ).c_str() );
+  h1_xF_r  ->Draw();  c1->SaveAs( (dir_out+"/h1_xF_r.pdf"  ).c_str() );
+  h1_xF_d  ->Draw();  c1->SaveAs( (dir_out+"/h1_xF_d.pdf"  ).c_str() );
+  h1_z_t   ->Draw();  c1->SaveAs( (dir_out+"/h1_z_t.pdf"   ).c_str() );
+  h1_z_r   ->Draw();  c1->SaveAs( (dir_out+"/h1_z_r.pdf"   ).c_str() );
+  h1_z_d   ->Draw();  c1->SaveAs( (dir_out+"/h1_z_d.pdf"   ).c_str() );
 
   exit(0);
 }

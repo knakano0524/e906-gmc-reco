@@ -59,10 +59,9 @@ root -b ana_acc.cc
 ./exec-embedding.sh
 ./submit-tracking.sh messy
 ./submit-vertexing.sh messy
-root -b 'ana_event.cc("messy")'
+root -b 'ana_event.cc("messy")' # Can skip this since taking a long time
 root -b 'ana_track.cc("messy")'
 root -b 'ana_vertex.cc("messy")'
-root -b 'ana_trig_acc.cc("messy")'
 root -b  ana_clean_messy.cc
 ```
 

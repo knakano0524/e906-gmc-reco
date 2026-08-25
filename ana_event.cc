@@ -22,8 +22,9 @@ void ana_event(const string bg_mode="clean")
   vector<string> list_in = FindFiles(dir_data, "user_*.root");
   for (auto it = list_in.begin(); it != list_in.end(); it++) tree->Add(it->c_str());
 
-  gSystem->mkdir("result/event", true);
-  TFile* f_out = new TFile("result/event/result.root", "RECREATE");
+  string dir_out = (string)"result/event_" + bg_mode;
+  gSystem->mkdir(dir_out.c_str(), true);
+  TFile* f_out = new TFile((dir_out+"/result.root").c_str(), "RECREATE");
   TH1* h1_cnt = new TH1D("h1_cnt", "", 10, 0.5, 10.5);
   TH2* h2_mass_xF_all  = new TH2D("h2_mass_xF_all" ,     "All;Mass;xF", 50, 0, 10, 30, -0.2, 1.0);
   TH2* h2_mass_xF_tbbt = new TH2D("h2_mass_xF_tbbt", "T+B/B+T;Mass;xF", 50, 0, 10, 30, -0.2, 1.0);
@@ -113,7 +114,7 @@ void ana_event(const string bg_mode="clean")
   }
   cout << endl;
     
-  ofstream ofs("result/event/result.txt");
+  ofstream ofs((dir_out+"/result.txt").c_str());
   ofs << "N of trees   = " << n_tree << "\n"
       << "N of all events     = " << h1_cnt->GetBinContent(1) << "\n"
       << "N of T+B/B+T events = " << h1_cnt->GetBinContent(2) << "\n"
@@ -126,12 +127,12 @@ void ana_event(const string bg_mode="clean")
   int opt_stat = gStyle->GetOptStat();
   gStyle->SetOptStat(0);
   c1->SetLogz(true);
-  h2_mass_xF_all ->Draw("colz");  c1->SaveAs("result/event/h2_mass_xF_all.pdf");
-  h2_mass_xF_tbbt->Draw("colz");  c1->SaveAs("result/event/h2_mass_xF_tbbt.pdf");
-  h2_mass_xF_fpga->Draw("colz");  c1->SaveAs("result/event/h2_mass_xF_fpga.pdf");
-  h2_mass_x2_all ->Draw("colz");  c1->SaveAs("result/event/h2_mass_x2_all.pdf");
-  h2_mass_x2_tbbt->Draw("colz");  c1->SaveAs("result/event/h2_mass_x2_tbbt.pdf");
-  h2_mass_x2_fpga->Draw("colz");  c1->SaveAs("result/event/h2_mass_x2_fpga.pdf");
+  h2_mass_xF_all ->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_xF_all.pdf" ).c_str() );
+  h2_mass_xF_tbbt->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_xF_tbbt.pdf").c_str() );
+  h2_mass_xF_fpga->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_xF_fpga.pdf").c_str() );
+  h2_mass_x2_all ->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_x2_all.pdf" ).c_str() );
+  h2_mass_x2_tbbt->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_x2_tbbt.pdf").c_str() );
+  h2_mass_x2_fpga->Draw("colz");  c1->SaveAs( (dir_out+"/h2_mass_x2_fpga.pdf").c_str() );
   c1->SetLogz(false);
 
   TH2* h2_acc = (TH2*)h2_mass_xF_fpga->Clone("h2_acc");
@@ -139,14 +140,14 @@ void ana_event(const string bg_mode="clean")
   h2_acc->SetTitle("Trigger acceptance");
   h2_acc->Draw("colz");
   h2_acc->GetZaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/event/h2_acc.pdf");
+  c1->SaveAs( (dir_out+"/h2_acc.pdf").c_str() );
 
   TH2* h2_acc_x2 = (TH2*)h2_mass_x2_fpga->Clone("h2_acc_x2");
   h2_acc_x2->Divide(h2_mass_x2_tbbt);
   h2_acc_x2->SetTitle("Trigger acceptance");
   h2_acc_x2->Draw("colz");
   h2_acc_x2->GetZaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/event/h2_acc_x2.pdf");
+  c1->SaveAs( (dir_out+"/h2_acc_x2.pdf").c_str() );
   
   const double mass_lo =  4.0;
   const double mass_hi = 10.0;
@@ -164,7 +165,7 @@ void ana_event(const string bg_mode="clean")
   h1_acc_mass->SetTitle( Form("%.1f < xF < %.1f;Mass;Trigger acceptance", xF_lo, xF_hi) );
   h1_acc_mass->Draw("HIST");
   h1_acc_mass->GetYaxis()->SetRangeUser(0, 1);
-  c1->SaveAs("result/event/h1_acc_mass.pdf");
+  c1->SaveAs( (dir_out+"/h1_acc_mass.pdf").c_str() );
 
   TH1* h1_xF_tbbt = h2_mass_xF_tbbt->ProjectionY("h1_xF_tbbt", bin_mass_lo, bin_mass_hi);
   TH1* h1_acc_xF  = h2_mass_xF_fpga->ProjectionY("h1_acc_xF" , bin_mass_lo, bin_mass_hi);
@@ -173,7 +174,7 @@ void ana_event(const string bg_mode="clean")
   h1_acc_xF->SetTitle( Form("%.1f < Mass < %.1f;xF;Trigger acceptance", mass_lo, mass_hi) );
   h1_acc_xF->Draw("HIST");
   h1_acc_xF->GetYaxis()->SetRangeUser(0, 1);  
-  c1->SaveAs("result/event/h1_acc_xF.pdf");
+  c1->SaveAs( (dir_out+"/h1_acc_xF.pdf").c_str() );
 
   TH1* h1_x2_tbbt = h2_mass_x2_tbbt->ProjectionY("h1_x2_tbbt", bin_mass_lo, bin_mass_hi);
   TH1* h1_acc_x2  = h2_mass_x2_fpga->ProjectionY("h1_acc_x2" , bin_mass_lo, bin_mass_hi);
@@ -182,7 +183,7 @@ void ana_event(const string bg_mode="clean")
   h1_acc_x2->SetTitle( Form("%.1f < Mass < %.1f;x2;Trigger acceptance", mass_lo, mass_hi) );
   h1_acc_x2->Draw("HIST");
   h1_acc_x2->GetYaxis()->SetRangeUser(0, 1);  
-  c1->SaveAs("result/event/h1_acc_x2.pdf");
+  c1->SaveAs( (dir_out+"/h1_acc_x2.pdf").c_str() );
 
   ///
   /// N of chamber hits/station
@@ -199,7 +200,7 @@ void ana_event(const string bg_mode="clean")
     h1[1]->SetLineColor(kRed);
     h1[1]->Draw("HIST");
     h1[0]->Draw("HISTsame");
-    c1->SaveAs( Form("result/event/h1_nhit_st%i.pdf", st));
+    c1->SaveAs( Form("%s/h1_nhit_st%i.pdf", dir_out.c_str(), st));
     for (int it = 0; it < 2; it++) delete h1[it];
   }
   

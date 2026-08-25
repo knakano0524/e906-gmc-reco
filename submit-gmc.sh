@@ -9,6 +9,7 @@ echo "RAW_NAME = $RAW_NAME"
 PRESET=
 case $RUN_MODE in
     run2 ) PRESET=run2 ;;
+    rs59 ) PRESET=rs59 ;;
     rs62 ) PRESET=rs62 ;;
     run3 ) PRESET=run3 ;;
     rs70 ) PRESET=rs70 ;;
