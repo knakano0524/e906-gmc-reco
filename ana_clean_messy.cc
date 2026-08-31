@@ -11,7 +11,8 @@ void ana_clean_messy()
 {
   int tgt_id = atoi(gSystem->Getenv("TGT_ID"));
   int rs_id  = atoi(gSystem->Getenv("ROADSET_ID"));
-  cout << "Roadset " << rs_id << endl;
+  cout << "tgt_id = " << tgt_id << "\n"
+       << "rs_id  = " << rs_id << endl;
   //auto list_road_pos_top = UtilTrigger::ReadRoadList(rs_id, +1, +1);
   //auto list_road_pos_bot = UtilTrigger::ReadRoadList(rs_id, +1, -1);
   //auto list_road_neg_top = UtilTrigger::ReadRoadList(rs_id, -1, +1);

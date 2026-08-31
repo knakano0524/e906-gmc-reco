@@ -3,8 +3,8 @@ source /exp/seaquest/app/software/osg/software/AL9/seaquest-dev/ktracker-0728/se
 #source /exp/seaquest/app/software/osg/users/kenichi/e906/ktracker0803c/setup.sh
 
 export GEN_MODE=dy
-export RUN_MODE=rs59  # run2 rs59 rs62 run3 rs70 run5 run6
-export TGT_MODE=lh2
+export RUN_MODE=rs57  # run2 rs59 rs62 rs67 rs70 run5 run6
+export TGT_MODE=lh2  # lh2 ld2 fe c w
 export RAW_NAME_BASE=gmc_${GEN_MODE}_${TGT_MODE}_${RUN_MODE}
 #export ACC_MODE=acc # 4pi acc
 #export RAW_NAME=gmc_${GEN_MODE}_${TGT_MODE}_${RUN_MODE}_${ACC_MODE}
@@ -33,10 +33,10 @@ ln -nfs $DIR_DATA_BASE GMC
 
 ROADSET_ID=
 case $RUN_MODE in
-    run2 ) ROADSET_ID=57 ;;
+    rs57 ) ROADSET_ID=57 ;;
     rs59 ) ROADSET_ID=59 ;;
     rs62 ) ROADSET_ID=62 ;;
-    run3 ) ROADSET_ID=67 ;;
+    rs67 ) ROADSET_ID=67 ;;
     rs70 ) ROADSET_ID=70 ;;
     run5 ) ROADSET_ID=78 ;;
     *    ) ROADSET_ID=0  ;;
@@ -47,20 +47,23 @@ TGT_ID=
 case $TGT_MODE in
     lh2 ) TGT_ID=1 ;;
     ld2 ) TGT_ID=3 ;;
+    fe  ) TGT_ID=5 ;;
+    c   ) TGT_ID=6 ;;
+    w   ) TGT_ID=7 ;;
     *   ) TGT_ID=0 ;;
 esac
 export TGT_ID
 
 OPT_NAME=
 case $RUN_MODE in
-    run2 ) OPT_NAME=57_2 ;;
+    rs57 ) OPT_NAME=57_2 ;;
     rs59 ) OPT_NAME=59 ;;
     rs62 ) OPT_NAME=62 ;;
-    run3 ) OPT_NAME=67 ;;
+    rs67 ) OPT_NAME=67 ;;
     rs70 ) OPT_NAME=70 ;;
     run5 ) OPT_NAME=5ea ;;
-    #run2 ) OPT_NAME=57_2_AZE0 ;;
-    #run3 ) OPT_NAME=67_AZE0 ;;
+    #rs57 ) OPT_NAME=57_2_AZE0 ;;
+    #rs67 ) OPT_NAME=67_AZE0 ;;
     #run5 ) OPT_NAME=5ea_AZE0 ;;
     *    ) OPT_NAME=NA ;;
 esac

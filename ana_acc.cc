@@ -6,16 +6,29 @@
 #include "inc/UtilCut.h"
 R__LOAD_LIBRARY(kTracker)
 using namespace std;
-void Ana4pi();
-void AnaAcc(const string bg_mode, const int rs_id);
+void Ana4pi(const int tgt_id);
+void AnaAcc(const string bg_mode, const int tgt_id, const int rs_id);
 void DrawOneKin(TH1* h1_4pi, TH1* h1_acc, TH1* h1_acc2, const char* var);
+
+struct AccData {
+  double weight;
+  double mass;
+  double xF;
+  double pT;
+  AccData(): weight(0), mass(0), xF(0), pT(0) {;}
+  virtual ~AccData() {;}
+};
+
+TFile* f_tree;
 
 void ana_acc()
 {
   gSystem->mkdir("result/acc", true);
 
-  int rs_id = atoi(gSystem->Getenv("ROADSET_ID"));
-  cout << "Roadset " << rs_id << endl;
+  int tgt_id = atoi(gSystem->Getenv("TGT_ID"));  
+  int rs_id  = atoi(gSystem->Getenv("ROADSET_ID"));
+  cout << "tgt_id = " << tgt_id << "\n"
+       << "rs_id  = " << rs_id << endl;
   
   string opt_name = gSystem->Getenv("OPT_NAME");  
   string fn_opts  = gSystem->Getenv("KTRACKER_ROOT");
@@ -23,9 +36,11 @@ void ana_acc()
   JobOptsSvc::instance()->init(fn_opts.c_str());
   GeomSvc::instance()->init();
 
+  f_tree = new TFile("result/acc/tree.root", "RECREATE");
+  
   /// Can skip Ana4pi() and/or AnaAcc() if their outputs are unchanged
-  Ana4pi();
-  AnaAcc("clean", rs_id);
+  Ana4pi(tgt_id);
+  AnaAcc("clean", tgt_id, rs_id);
 
   /// Read the 4pi and acc outputs to compute the acceptance.
   const double n_evt_gen = 10e6;
@@ -80,7 +95,7 @@ void ana_acc()
 ////////////////////////////////////////////////////////////////
 /// Functions
 ///
-void Ana4pi()
+void Ana4pi(const int tgt_id)
 {
   cout << "ana_4pi()" << endl;
   TChain* tree = new TChain("save");
@@ -98,6 +113,11 @@ void Ana4pi()
   TH1* h1_x2_4pi   = new TH1D("h1_x2_4pi"  , "", 20,  0.0, 0.5);
   TH1* h1_pT_4pi   = new TH1D("h1_pT_4pi"  , "", 20,  0.0, 2.0);
 
+  f_tree->cd();
+  TTree* tr_out = new TTree("tree_4pi", "");
+  AccData acc_data;
+  tr_out->Branch("event", &acc_data);
+  
   SRawMCEvent* raw = 0;
   tree->SetBranchAddress("rawEvent", &raw);
   for (unsigned int i_ent = 0; i_ent < n_ent; i_ent++) {
@@ -105,21 +125,37 @@ void Ana4pi()
     else if ( (i_ent+1) % (n_ent/100   ) == 0) cout << "." << flush;
     tree->GetEntry(i_ent);
     if (UtilCut::Doc2111v42TrueDimuon(raw)) {
-      double weight = raw->weight;
-      h1_mass_4pi->Fill(raw->mass, weight);
-      h1_xF_4pi  ->Fill(raw->xF  , weight);
-      h1_x1_4pi  ->Fill(raw->x1  , weight);
-      h1_x2_4pi  ->Fill(raw->x2  , weight);
-      h1_pT_4pi  ->Fill(raw->pT  , weight);
+      double mass   = raw->mass;
+      double xF     = raw->xF;
+      double x1     = raw->x1;
+      double x2     = raw->x2;
+      double pT     = raw->pT;
+      double weight = raw->weight * GetPtReWeight(tgt_id, pT, xF, mass);
+      h1_mass_4pi->Fill(mass, weight);
+      h1_xF_4pi  ->Fill(xF  , weight);
+      h1_x1_4pi  ->Fill(x1  , weight);
+      h1_x2_4pi  ->Fill(x2  , weight);
+      h1_pT_4pi  ->Fill(pT  , weight);
+      
+      acc_data.weight = weight;
+      acc_data.mass   = mass;
+      acc_data.xF     = xF;
+      acc_data.pT     = pT;
+      tr_out->Fill();
     }
   }
   cout << endl;
 
+  f_tree->cd();
+  f_tree->Write();
+  delete tr_out;
+
+  f_out->cd();
   f_out->Write();
   f_out->Close();
 }
 
-void AnaAcc(const string bg_mode, const int rs_id)
+void AnaAcc(const string bg_mode, const int tgt_id, const int rs_id)
 {
   cout << "AnaAcc()" << endl;
   auto list_road_pos_top = UtilTrigger::ReadRoadList(rs_id, +1, +1);
@@ -147,6 +183,11 @@ void AnaAcc(const string bg_mode, const int rs_id)
   TH1* h1_x2_acc2   = new TH1D("h1_x2_acc2"  , "", 20,  0.0, 0.5);
   TH1* h1_pT_acc2   = new TH1D("h1_pT_acc2"  , "", 20,  0.0, 2.0);
 
+  f_tree->cd();
+  TTree* tr_out = new TTree("tree_acc", "");
+  AccData acc_data;
+  tr_out->Branch("event", &acc_data);
+  
   SRawMCEvent* raw = 0;
   SRecEvent  * rec = 0;
   tree->SetBranchAddress("rawEvent", &raw);
@@ -155,11 +196,13 @@ void AnaAcc(const string bg_mode, const int rs_id)
     if      ( (i_ent+1) % (n_ent/100*10) == 0) cout << "o" << flush;
     else if ( (i_ent+1) % (n_ent/100   ) == 0) cout << "." << flush;
     tree->GetEntry(i_ent);
-    double weight = raw->weight;
     double mass_t = raw->mass;
+    double xF_t   = raw->xF;
+    double pT_t   = raw->pT;
+    //double x1_t   = raw->x1;
     //double x2_t   = raw->x2;
-    //double xF_t   = raw->xF;
     //double zvtx_t = raw->vtx.Z();
+    double weight = raw->weight * GetPtReWeight(tgt_id, pT_t, xF_t, mass_t);
 
     bool list_cut_ok[99];
     int i_dim_best = -1;
@@ -182,6 +225,12 @@ void AnaAcc(const string bg_mode, const int rs_id)
       h1_x1_acc  ->Fill(dim.x1  , weight);
       h1_x2_acc  ->Fill(dim.x2  , weight);
       h1_pT_acc  ->Fill(dim.pT  , weight);
+
+      acc_data.weight = weight;
+      acc_data.mass   = dim.mass;
+      acc_data.xF     = dim.xF;
+      acc_data.pT     = dim.pT;
+      tr_out->Fill();
     }
     
     i_dim_best = -1;
@@ -218,6 +267,11 @@ void AnaAcc(const string bg_mode, const int rs_id)
   }
   cout << endl;
 
+  f_tree->cd();
+  f_tree->Write();
+  delete tr_out;
+
+  f_out->cd();
   f_out->Write();
   f_out->Close();
 }
