@@ -48,7 +48,7 @@ case $1 in
 	;;
     track-messy | t-m )
 	SetRawName acc
-	DIR=$DIR_DATA_BASE/track/$RAW_NAME/clean/track
+	DIR=$DIR_DATA_BASE/track/$RAW_NAME/messy/track
 	;;
     vertex-clean | v-c )
 	SetRawName acc
@@ -56,7 +56,7 @@ case $1 in
 	;;
     vertex-messy | v-m )
 	SetRawName acc
-	DIR=$DIR_DATA_BASE/vertex/$RAW_NAME/clean/vertex
+	DIR=$DIR_DATA_BASE/vertex/$RAW_NAME/messy/vertex
 	;;
     * )
 	PrintHelp
